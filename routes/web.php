@@ -5,14 +5,16 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\DemandeDemoController;
 
-// Public routes - Portail client
-Route::get('/', function () {
-    return view('portal.home');
-})->name('home');
+// Routes publiques
+Route::get('/solutions', [App\Http\Controllers\PublicController::class, 'solutions'])->name('solutions');
+Route::get('/', [App\Http\Controllers\PublicController::class, 'home'])->name('home');
 
-Route::get('/services', function () {
-    return view('portal.services');
-})->name('services');
+Route::get('/services', [App\Http\Controllers\PublicController::class, 'services'])->name('services');
+Route::get('/services/{service}', [App\Http\Controllers\PublicController::class, 'serviceDetail'])->name('service.detail');
+Route::get('/test-services', [App\Http\Controllers\PublicController::class, 'testServices'])->name('test.services');
+Route::get('/test-colors', function() {
+    return view('test-colors');
+})->name('test.colors');
 
 Route::get('/contact', function () {
     return view('portal.contact');
@@ -20,6 +22,59 @@ Route::get('/contact', function () {
 
 // Route pour le formulaire de demande de démo
 Route::post('/demande-demo', [DemandeDemoController::class, 'store'])->name('demande-demo.store');
+
+// Route de test pour les emails (à supprimer en production)
+Route::get('/test-email', function () {
+    try {
+        $demande = new \App\Models\DemandeDemo([
+            'nom' => 'Test Client',
+            'email' => 'test@example.com',
+            'telephone' => '+221 77 123 45 67',
+            'message' => 'Ceci est un test d\'email',
+            'statut' => 'en_attente',
+            'source' => 'test',
+            'priorite' => 'moyenne',
+        ]);
+        
+        // Test email de confirmation
+        \Mail::to('test@example.com')->send(new \App\Mail\DemandeDemoConfirmation($demande));
+        
+        // Test email de notification admin
+        \Mail::to(config('app.admin_email'))->send(new \App\Mail\NouvelleDemandeDemo($demande));
+        
+        return 'Emails envoyés avec succès ! Vérifiez les logs dans storage/logs/laravel.log';
+    } catch (\Exception $e) {
+        return 'Erreur: ' . $e->getMessage();
+    }
+})->name('test.email');
+
+// Route de test Livewire
+Route::get('/test-livewire', function () {
+    return view('test-livewire');
+})->name('test.livewire');
+
+// Default dashboard route - redirects users according to role
+Route::get('/dashboard', function () {
+    $user = auth()->user();
+    
+    if (!$user) {
+        return redirect()->route('login');
+    }
+    
+    if ($user->role === 'admin') {
+        if ($user->administrateur) {
+            if ($user->administrateur->type === 'manager') {
+                return redirect()->route('manager.dashboard');
+            } elseif ($user->administrateur->type === 'commercial') {
+                return redirect()->route('commercial.dashboard');
+            }
+        }
+        return redirect()->route('admin.dashboard');
+    }
+    
+    // Clients go to their profile page
+    return redirect()->route('client.profile');
+})->middleware('auth:sanctum')->name('dashboard');
 
 // Authentication routes (Jetstream handles these)
 Route::get('/login', function () {
@@ -36,28 +91,27 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    // Client profile and dashboard
-    Route::get('/mon-profil', function () {
-        $user = auth()->user();
-        
-        if ($user->role === 'admin') {
-            // Redirect admins to their respective dashboards
-            if ($user->administrateur) {
-                if ($user->administrateur->type === 'manager') {
-                    return redirect()->route('manager.dashboard');
-                } elseif ($user->administrateur->type === 'commercial') {
-                    return redirect()->route('commercial.dashboard');
-                }
-            }
-            return redirect()->route('admin.dashboard');
-        }
-        
-        // Clients stay on public portal with profile access
-        return view('portal.client-profile');
-    })->name('client.profile');
-
     // Client specific routes
     Route::prefix('client')->group(function () {
+        Route::get('/profile', function () {
+            $user = auth()->user();
+            
+            if ($user->role === 'admin') {
+                // Redirect admins to their respective dashboards
+                if ($user->administrateur) {
+                    if ($user->administrateur->type === 'manager') {
+                        return redirect()->route('manager.dashboard');
+                    } elseif ($user->administrateur->type === 'commercial') {
+                        return redirect()->route('commercial.dashboard');
+                    }
+                }
+                return redirect()->route('admin.dashboard');
+            }
+            
+            // Clients stay on public portal with profile access
+            return view('portal.client-profile');
+        })->name('client.profile');
+        
         Route::get('/devis', function () {
             return view('portal.client-devis');
         })->name('client.devis');
@@ -65,6 +119,8 @@ Route::middleware([
         Route::get('/factures', function () {
             return view('portal.client-factures');
         })->name('client.factures');
+        
+
     });
 });
 
@@ -93,18 +149,73 @@ Route::prefix('admin')->group(function () {
         'role:admin',
     ])->group(function () {
         Route::view('/dashboard', 'admin.dashboard')->name('admin.dashboard');
+        
+        // Routes pour la gestion des demandes de démo
+        Route::prefix('demandes-demo')->group(function () {
+            Route::get('/', [DemandeDemoController::class, 'index'])->name('admin.demandes-demo.index');
+            Route::get('/{demandeDemo}', [DemandeDemoController::class, 'show'])->name('admin.demandes-demo.show');
+            Route::put('/{demandeDemo}', [DemandeDemoController::class, 'update'])->name('admin.demandes-demo.update');
+            Route::delete('/{demandeDemo}', [DemandeDemoController::class, 'destroy'])->name('admin.demandes-demo.destroy');
+            Route::patch('/{demandeDemo}/traiter', [DemandeDemoController::class, 'traiter'])->name('admin.demandes-demo.traiter');
+            Route::patch('/{demandeDemo}/terminer', [DemandeDemoController::class, 'terminer'])->name('admin.demandes-demo.terminer');
+        });
     });
 });
 
 // Manager area
-Route::prefix('manager')->group(function () {
-    Route::middleware([
-        'auth:sanctum',
-        config('jetstream.auth_session'),
-        'verified',
-        'role:admin',
-    ])->group(function () {
-        Route::view('/dashboard', 'manager.dashboard')->name('manager.dashboard');
+Route::prefix('manager')->name('manager.')->middleware(['auth:sanctum', 'verified'])->group(function () {
+    Route::get('/dashboard', function () {
+        return view('manager.dashboard');
+    })->name('dashboard');
+    
+    // Gestion des commerciaux
+    Route::get('/commerciaux', function () {
+        return view('manager.commerciaux.index');
+    })->name('commerciaux.index');
+    
+    Route::get('/commerciaux/{commercial}', function ($commercial) {
+        return view('manager.commerciaux.show', compact('commercial'));
+    })->name('commerciaux.show');
+    
+    // Supervision des demandes de démo
+    Route::get('/demandes-demo', function () {
+        return view('manager.demandes-demo.index');
+    })->name('demandes-demo.index');
+    
+    Route::get('/demandes-demo/{demande}', function ($demande) {
+        return view('manager.demandes-demo.show', compact('demande'));
+    })->name('demandes-demo.show');
+    
+    // Supervision des devis
+    Route::get('/devis', function () {
+        return view('manager.devis.index');
+    })->name('devis.index');
+    
+    // Supervision des factures
+    Route::get('/factures', function () {
+        return view('manager.factures.index');
+    })->name('factures.index');
+    
+    // Rapports
+    Route::get('/rapports', function () {
+        return view('manager.rapports.index');
+    })->name('rapports.index');
+    
+    // Analytics
+    Route::get('/analytics', function () {
+        return view('manager.analytics.index');
+    })->name('analytics.index');
+    
+    // Gestion des services
+    Route::resource('services', \App\Http\Controllers\Manager\ServiceController::class);
+    
+    // Gestion des éléments des services
+    Route::prefix('services/{service}/items')->name('services.items.')->group(function () {
+        Route::get('/create', [\App\Http\Controllers\Manager\ItemController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\Manager\ItemController::class, 'store'])->name('store');
+        Route::get('/{item}/edit', [\App\Http\Controllers\Manager\ItemController::class, 'edit'])->name('edit');
+        Route::put('/{item}', [\App\Http\Controllers\Manager\ItemController::class, 'update'])->name('update');
+        Route::delete('/{item}', [\App\Http\Controllers\Manager\ItemController::class, 'destroy'])->name('destroy');
     });
 });
 
@@ -117,5 +228,115 @@ Route::prefix('commercial')->group(function () {
         'role:admin',
     ])->group(function () {
         Route::view('/dashboard', 'commercial.dashboard')->name('commercial.dashboard');
+        
+        // Routes pour la gestion des demandes de démo (commerciaux)
+        Route::prefix('demandes-demo')->group(function () {
+            Route::get('/', [DemandeDemoController::class, 'indexCommercial'])->name('commercial.demandes-demo.index');
+            Route::get('/create', [DemandeDemoController::class, 'createCommercial'])->name('commercial.demandes-demo.create');
+            Route::post('/', [DemandeDemoController::class, 'storeCommercial'])->name('commercial.demandes-demo.store');
+            Route::get('/{demandeDemo}', [DemandeDemoController::class, 'showCommercial'])->name('commercial.demandes-demo.show');
+            Route::put('/{demandeDemo}', [DemandeDemoController::class, 'updateCommercial'])->name('commercial.demandes-demo.update');
+            Route::patch('/{demandeDemo}/traiter', [DemandeDemoController::class, 'traiter'])->name('commercial.demandes-demo.traiter');
+            Route::patch('/{demandeDemo}/terminer', [DemandeDemoController::class, 'terminer'])->name('commercial.demandes-demo.terminer');
+            Route::post('/{demandeDemo}/envoyer-confirmation', [DemandeDemoController::class, 'envoyerConfirmation'])->name('commercial.demandes-demo.confirmation');
+            Route::post('/{demandeDemo}/accepter', [DemandeDemoController::class, 'accepter'])->name('commercial.demandes-demo.accepter');
+            Route::post('/{demandeDemo}/refuser', [DemandeDemoController::class, 'refuser'])->name('commercial.demandes-demo.refuser');
+            Route::post('/{demandeDemo}/planifier-rdv', [DemandeDemoController::class, 'planifierRendezVous'])->name('commercial.demandes-demo.planifier-rdv');
+            Route::patch('/{demandeDemo}/en-cours', [DemandeDemoController::class, 'marquerEnCours'])->name('commercial.demandes-demo.en-cours');
+            Route::patch('/{demandeDemo}/terminee', [DemandeDemoController::class, 'marquerTerminee'])->name('commercial.demandes-demo.terminee');
+            Route::patch('/{demandeDemo}/en-attente', [DemandeDemoController::class, 'mettreEnAttente'])->name('commercial.demandes-demo.en-attente');
+            Route::patch('/{demandeDemo}/priorite', [DemandeDemoController::class, 'modifierPriorite'])->name('commercial.demandes-demo.priorite');
+        });
+
+        // Routes pour la gestion du planning
+        Route::prefix('planning')->group(function () {
+            Route::get('/', [DemandeDemoController::class, 'planning'])->name('commercial.planning');
+            Route::post('/creer-creneau', [DemandeDemoController::class, 'creerCreneau'])->name('commercial.planning.creer');
+        });
+
+        // Routes pour la gestion des clients
+        Route::prefix('clients')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Commercial\ClientController::class, 'index'])->name('commercial.clients.index');
+            Route::get('/create', [\App\Http\Controllers\Commercial\ClientController::class, 'create'])->name('commercial.clients.create');
+            Route::post('/', [\App\Http\Controllers\Commercial\ClientController::class, 'store'])->name('commercial.clients.store');
+            Route::get('/{client}', [\App\Http\Controllers\Commercial\ClientController::class, 'show'])->name('commercial.clients.show');
+            Route::get('/{client}/edit', [\App\Http\Controllers\Commercial\ClientController::class, 'edit'])->name('commercial.clients.edit');
+            Route::put('/{client}', [\App\Http\Controllers\Commercial\ClientController::class, 'update'])->name('commercial.clients.update');
+            Route::delete('/{client}', [\App\Http\Controllers\Commercial\ClientController::class, 'destroy'])->name('commercial.clients.destroy');
+            Route::post('/{client}/planifier-rdv', [\App\Http\Controllers\Commercial\ClientController::class, 'planifierRendezVous'])->name('commercial.clients.planifier-rdv');
+            Route::post('/{client}/envoyer-email', [\App\Http\Controllers\Commercial\ClientController::class, 'envoyerEmail'])->name('commercial.clients.envoyer-email');
+        });
+
+        // Routes pour la gestion des demandes de devis
+        Route::prefix('demandes-devis')->group(function () {
+            Route::get('/', function () {
+                return view('commercial.demandes-devis.index');
+            })->name('commercial.demandes-devis.index');
+            Route::get('/create', function () {
+                return view('commercial.demandes-devis.create');
+            })->name('commercial.demandes-devis.create');
+            Route::get('/{demandeDevis}', function ($demandeDevis) {
+                return view('commercial.demandes-devis.show', compact('demandeDevis'));
+            })->name('commercial.demandes-devis.show');
+            Route::get('/{demandeDevis}/edit', function ($demandeDevis) {
+                return view('commercial.demandes-devis.edit', compact('demandeDevis'));
+            })->name('commercial.demandes-devis.edit');
+        });
+
+        // Routes pour la gestion des devis
+        Route::prefix('devis')->group(function () {
+            Route::get('/', function () {
+                return view('commercial.devis.index');
+            })->name('commercial.devis.index');
+            Route::get('/create', function () {
+                return view('commercial.devis.create');
+            })->name('commercial.devis.create');
+            Route::get('/{devis}', function ($devis) {
+                return view('commercial.devis.show', compact('devis'));
+            })->name('commercial.devis.show');
+            Route::get('/{devis}/edit', function ($devis) {
+                return view('commercial.devis.edit', compact('devis'));
+            })->name('commercial.devis.edit');
+            Route::get('/{devis}/download', function ($devis) {
+                // Logique de téléchargement
+                return response()->json(['message' => 'Téléchargement en cours']);
+            })->name('commercial.devis.download');
+        });
+
+        // Routes pour la gestion des factures
+        Route::prefix('factures')->group(function () {
+            Route::get('/', function () {
+                return view('commercial.factures.index');
+            })->name('commercial.factures.index');
+            Route::get('/create', function () {
+                return view('commercial.factures.create');
+            })->name('commercial.factures.create');
+            Route::get('/{facture}', function ($facture) {
+                return view('commercial.factures.show', compact('facture'));
+            })->name('commercial.factures.show');
+            Route::get('/{facture}/edit', function ($facture) {
+                return view('commercial.factures.edit', compact('facture'));
+            })->name('commercial.factures.edit');
+            Route::get('/{facture}/download', function ($facture) {
+                // Logique de téléchargement
+                return response()->json(['message' => 'Téléchargement en cours']);
+            })->name('commercial.factures.download');
+        });
+
+        // Routes pour la gestion des abonnements
+        Route::prefix('abonnements')->group(function () {
+            Route::get('/', function () {
+                return view('commercial.abonnements.index');
+            })->name('commercial.abonnements.index');
+            Route::get('/create', function () {
+                return view('commercial.abonnements.create');
+            })->name('commercial.abonnements.create');
+            Route::get('/{abonnement}', function ($abonnement) {
+                return view('commercial.abonnements.show', compact('abonnement'));
+            })->name('commercial.abonnements.show');
+            Route::get('/{abonnement}/edit', function ($abonnement) {
+                return view('commercial.abonnements.edit', compact('abonnement'));
+            })->name('commercial.abonnements.edit');
+        });
     });
 });

@@ -18,19 +18,22 @@ class RedirectAccordingToRole
         if (auth()->check()) {
             $user = auth()->user();
             
-            if ($user->role === 'admin') {
-                if ($user->administrateur) {
-                    if ($user->administrateur->type === 'manager') {
-                        return redirect()->route('manager.dashboard');
-                    } elseif ($user->administrateur->type === 'commercial') {
-                        return redirect()->route('commercial.dashboard');
-                    }
+            // Vérifier d'abord si l'utilisateur est un administrateur (manager ou commercial)
+            if ($user->administrateur) {
+                if ($user->administrateur->type === 'manager') {
+                    return redirect()->route('manager.dashboard');
+                } elseif ($user->administrateur->type === 'commercial') {
+                    return redirect()->route('commercial.dashboard');
                 }
+            }
+            
+            // Si c'est un admin général (sans type spécifique)
+            if ($user->role === 'admin') {
                 return redirect()->route('admin.dashboard');
             }
             
-            // Clients go to home page
-            return redirect()->route('home');
+            // Clients go to their profile page
+            return redirect()->route('client.profile');
         }
 
         return $next($request);

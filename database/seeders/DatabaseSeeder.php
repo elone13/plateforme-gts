@@ -16,7 +16,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // Create a default admin manager
-        $adminManager = User::factory()->create([
+        $adminManager = User::create([
             'name' => 'Admin Manager',
             'email' => 'manager@example.com',
             'role' => 'admin',
@@ -28,7 +28,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // Create a default admin commercial
-        $adminCommercial = User::factory()->create([
+        $adminCommercial = User::create([
             'name' => 'Admin Commercial',
             'email' => 'commercial@example.com',
             'role' => 'admin',
@@ -40,7 +40,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // Create a test client
-        $client = User::factory()->create([
+        $client = User::create([
             'name' => 'Client Test',
             'email' => 'client@example.com',
             'role' => 'client',

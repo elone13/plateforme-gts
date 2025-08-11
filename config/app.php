@@ -123,4 +123,16 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Email Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configuration for administrative emails and notifications
+    |
+    */
+
+    'admin_email' => env('ADMIN_EMAIL', 'contact@gts-afrique.com'),
+    'commercial_email' => env('COMMERCIAL_EMAIL', 'commercial@gts-afrique.com'),
+
 ];

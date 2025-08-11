@@ -2,6 +2,311 @@
 @tailwind components;
 @tailwind utilities;
 
-[x-cloak] {
-    display: none;
+/* GTS Afrique - Palette de couleurs officielle */
+
+:root {
+    /* Couleurs principales du site officiel */
+    --gts-primary: #fcd61b;       /* Jaune principal GTS Afrique */
+    --gts-primary-dark: #e6c200;  /* Jaune foncé */
+    --gts-primary-light: #fde047; /* Jaune clair */
+    
+    /* Couleurs secondaires */
+    --gts-secondary: #1e40af;     /* Bleu secondaire */
+    --gts-secondary-dark: #1e3a8a; /* Bleu foncé */
+    --gts-secondary-light: #3b82f6; /* Bleu clair */
+    
+    /* Couleurs d'accent */
+    --gts-accent: #059669;        /* Vert */
+    --gts-accent-dark: #047857;   /* Vert foncé */
+    --gts-accent-light: #10b981;  /* Vert clair */
+    
+    /* Couleurs neutres */
+    --gts-gray-50: #f9fafb;
+    --gts-gray-100: #f3f4f6;
+    --gts-gray-200: #e5e7eb;
+    --gts-gray-300: #d1d5db;
+    --gts-gray-400: #9ca3af;
+    --gts-gray-500: #6b7280;
+    --gts-gray-600: #4b5563;
+    --gts-gray-700: #374151;
+    --gts-gray-800: #1f2937;
+    --gts-gray-900: #111827;
+    
+    /* Couleurs de statut */
+    --gts-success: #059669;
+    --gts-warning: #d97706;
+    --gts-error: #dc2626;
+    --gts-info: #2563eb;
+}
+
+/* Remplacement automatique des couleurs bleues par le jaune GTS */
+.bg-primary { background-color: var(--gts-primary) !important; }
+.bg-primary-dark { background-color: var(--gts-primary-dark) !important; }
+.bg-primary-light { background-color: var(--gts-primary-light) !important; }
+.text-primary { color: var(--gts-primary) !important; }
+.text-primary-dark { color: var(--gts-primary-dark) !important; }
+.text-primary-light { color: var(--gts-primary-light) !important; }
+.border-primary { border-color: var(--gts-primary) !important; }
+.border-primary-dark { border-color: var(--gts-primary-dark) !important; }
+.border-primary-light { border-color: var(--gts-primary-light) !important; }
+
+.hover\:bg-primary-dark:hover { background-color: var(--gts-primary-dark) !important; }
+.hover\:text-primary:hover { color: var(--gts-primary) !important; }
+.hover\:border-primary:hover { border-color: var(--gts-primary) !important; }
+
+/* Classes utilitaires pour les couleurs GTS */
+.bg-gts-primary { background-color: var(--gts-primary); }
+.bg-gts-primary-dark { background-color: var(--gts-primary-dark); }
+.bg-gts-primary-light { background-color: var(--gts-primary-light); }
+.bg-gts-secondary { background-color: var(--gts-secondary); }
+.bg-gts-secondary-dark { background-color: var(--gts-secondary-dark); }
+.bg-gts-secondary-light { background-color: var(--gts-secondary-light); }
+.bg-gts-accent { background-color: var(--gts-accent); }
+.bg-gts-accent-dark { background-color: var(--gts-accent-dark); }
+.bg-gts-accent-light { background-color: var(--gts-accent-light); }
+
+.text-gts-primary { color: var(--gts-primary); }
+.text-gts-primary-dark { color: var(--gts-primary-dark); }
+.text-gts-primary-light { color: var(--gts-primary-light); }
+.text-gts-secondary { color: var(--gts-secondary); }
+.text-gts-secondary-dark { color: var(--gts-secondary-dark); }
+.text-gts-secondary-light { color: var(--gts-secondary-light); }
+.text-gts-accent { color: var(--gts-accent); }
+.text-gts-accent-dark { color: var(--gts-accent-dark); }
+.text-gts-accent-light { color: var(--gts-accent-light); }
+
+.border-gts-primary { border-color: var(--gts-primary); }
+.border-gts-secondary { border-color: var(--gts-secondary); }
+.border-gts-accent { border-color: var(--gts-accent); }
+
+/* Hover states */
+.hover\:bg-gts-primary-dark:hover { background-color: var(--gts-primary-dark); }
+.hover\:bg-gts-secondary-dark:hover { background-color: var(--gts-secondary-dark); }
+.hover\:bg-gts-accent-dark:hover { background-color: var(--gts-accent-dark); }
+
+.hover\:text-gts-primary:hover { color: var(--gts-primary); }
+.hover\:text-gts-secondary:hover { color: var(--gts-secondary); }
+.hover\:text-gts-accent:hover { color: var(--gts-accent); }
+
+/* Gradients GTS */
+.bg-gts-gradient {
+    background: linear-gradient(135deg, var(--gts-primary) 0%, var(--gts-primary-dark) 100%);
+}
+
+.bg-gts-gradient-secondary {
+    background: linear-gradient(135deg, var(--gts-secondary) 0%, var(--gts-secondary-dark) 100%);
+}
+
+.bg-gts-gradient-accent {
+    background: linear-gradient(135deg, var(--gts-accent) 0%, var(--gts-accent-dark) 100%);
+}
+
+/* Boutons GTS */
+.btn-gts-primary {
+    background-color: var(--gts-primary);
+    color: var(--gts-gray-900);
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn-gts-primary:hover {
+    background-color: var(--gts-primary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(252, 214, 27, 0.3);
+}
+
+.btn-gts-secondary {
+    background-color: var(--gts-secondary);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn-gts-secondary:hover {
+    background-color: var(--gts-secondary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
+}
+
+.btn-gts-accent {
+    background-color: var(--gts-accent);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn-gts-accent:hover {
+    background-color: var(--gts-accent-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+}
+
+/* Cards GTS */
+.card-gts {
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s ease;
+}
+
+.card-gts:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Sidebar GTS */
+.sidebar-gts {
+    background: linear-gradient(180deg, var(--gts-primary) 0%, var(--gts-primary-dark) 100%);
+    color: var(--gts-gray-900);
+}
+
+.sidebar-gts .nav-item {
+    transition: all 0.2s ease;
+}
+
+.sidebar-gts .nav-item:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+    transform: translateX(4px);
+}
+
+.sidebar-gts .nav-item.active {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-right: 3px solid var(--gts-secondary);
+}
+
+/* Header GTS */
+.header-gts {
+    background: white;
+    border-bottom: 2px solid var(--gts-primary);
+    box-shadow: 0 2px 4px rgba(252, 214, 27, 0.1);
+}
+
+/* Footer GTS */
+.footer-gts {
+    background: var(--gts-gray-800);
+    color: white;
+    border-top: 3px solid var(--gts-primary);
+}
+
+/* Formulaires GTS */
+.input-gts {
+    border: 2px solid var(--gts-gray-200);
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    transition: all 0.2s ease;
+}
+
+.input-gts:focus {
+    border-color: var(--gts-primary);
+    box-shadow: 0 0 0 3px rgba(252, 214, 27, 0.1);
+    outline: none;
+}
+
+/* Tableaux GTS */
+.table-gts {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.table-gts th {
+    background-color: var(--gts-primary);
+    color: var(--gts-gray-900);
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+}
+
+.table-gts td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--gts-gray-200);
+}
+
+.table-gts tr:hover {
+    background-color: var(--gts-gray-50);
+}
+
+/* Badges GTS */
+.badge-gts-primary {
+    background-color: var(--gts-primary);
+    color: var(--gts-gray-900);
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.badge-gts-secondary {
+    background-color: var(--gts-secondary);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.badge-gts-accent {
+    background-color: var(--gts-accent);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+/* Alertes GTS */
+.alert-gts-success {
+    background-color: var(--gts-success);
+    color: white;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border-left: 4px solid var(--gts-accent);
+}
+
+.alert-gts-warning {
+    background-color: var(--gts-warning);
+    color: white;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border-left: 4px solid var(--gts-secondary);
+}
+
+.alert-gts-error {
+    background-color: var(--gts-error);
+    color: white;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border-left: 4px solid #dc2626;
+}
+
+/* Modals GTS */
+.modal-gts {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-gts .modal-content {
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.modal-gts .modal-header {
+    background: var(--gts-primary);
+    color: var(--gts-gray-900);
+    border-radius: 1rem 1rem 0 0;
+}
+
+/* Responsive utilities */
+@media (max-width: 768px) {
+    .btn-gts-primary,
+    .btn-gts-secondary,
+    .btn-gts-accent {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+    }
 }

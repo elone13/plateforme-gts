@@ -40,6 +40,25 @@ class FortifyServiceProvider extends ServiceProvider
             return view('auth.register');
         });
 
+        // Configure redirection after login based on user role
+        Fortify::redirects('login', function () {
+            $user = auth()->user();
+            
+            if ($user->role === 'admin') {
+                if ($user->administrateur) {
+                    if ($user->administrateur->type === 'manager') {
+                        return route('manager.dashboard');
+                    } elseif ($user->administrateur->type === 'commercial') {
+                        return route('commercial.dashboard');
+                    }
+                }
+                return route('admin.dashboard');
+            }
+            
+            // Clients go to their profile page
+            return route('client.profile');
+        });
+
         RateLimiter::for('login', function (Request $request) {
             $email = (string) $request->email;
 

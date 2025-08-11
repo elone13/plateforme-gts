@@ -1,0 +1,87 @@
+<?php
+
+namespace App\Livewire\Manager;
+
+use App\Models\Service;
+use Livewire\Component;
+use Livewire\WithFileUploads;
+use Illuminate\Support\Facades\Storage;
+
+class CreateServiceModal extends Component
+{
+    use WithFileUploads;
+
+    public $showModal = false;
+    public $nom = '';
+    public $description = '';
+    public $image;
+
+    protected $rules = [
+        'nom' => 'required|string|max:255|unique:services',
+        'description' => 'required|string|min:10|max:1000',
+        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+    ];
+
+    protected $messages = [
+        'nom.required' => 'Le nom du service est requis.',
+        'nom.unique' => 'Ce nom de service existe déjà.',
+        'description.required' => 'La description est requise.',
+        'description.min' => 'La description doit contenir au moins 10 caractères.',
+        'image.image' => 'Le fichier doit être une image.',
+        'image.mimes' => 'L\'image doit être au format JPEG, PNG, JPG ou GIF.',
+        'image.max' => 'L\'image ne doit pas dépasser 2MB.'
+    ];
+
+    public function openModal()
+    {
+        $this->showModal = true;
+        $this->resetForm();
+    }
+
+    public function closeModal()
+    {
+        $this->showModal = false;
+        $this->resetForm();
+    }
+
+    public function resetForm()
+    {
+        $this->nom = '';
+        $this->description = '';
+        $this->image = null;
+        $this->resetErrorBag();
+    }
+
+    protected $listeners = ['open-create-service-modal' => 'openModal'];
+
+    public function createService()
+    {
+        $this->validate();
+
+        $data = [
+            'nom' => $this->nom,
+            'description' => $this->description,
+        ];
+
+        // Gestion de l'image
+        if ($this->image) {
+            $imagePath = $this->image->store('services', 'public');
+            $data['image'] = $imagePath;
+        }
+
+        Service::create($data);
+
+        $this->closeModal();
+        
+        // Émettre un événement pour rafraîchir la liste
+        $this->dispatch('service-created');
+        
+        // Message de succès
+        session()->flash('success', 'Service créé avec succès !');
+    }
+
+    public function render()
+    {
+        return view('livewire.manager.create-service-modal');
+    }
+}
