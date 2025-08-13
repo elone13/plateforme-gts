@@ -30,4 +30,5 @@ class Abonnement extends Model
     {
         return $this->belongsTo(Item::class, 'item_iditem', 'iditem');
     }
+
 }

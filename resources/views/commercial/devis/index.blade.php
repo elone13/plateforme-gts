@@ -37,7 +37,7 @@
                         <div class="ml-5 w-0 flex-1">
                             <dl>
                                 <dt class="text-sm font-medium text-gray-500 truncate">Total devis</dt>
-                                <dd class="text-lg font-medium text-gray-900">{{ \App\Models\Devis::count() }}</dd>
+                                <dd class="text-lg font-medium text-gray-900">{{ $totalDevis }}</dd>
                             </dl>
                         </div>
                     </div>
@@ -55,7 +55,7 @@
                         <div class="ml-5 w-0 flex-1">
                             <dl>
                                 <dt class="text-sm font-medium text-gray-500 truncate">En attente</dt>
-                                <dd class="text-lg font-medium text-gray-900">{{ \App\Models\Devis::where('statut', 'en_attente')->count() }}</dd>
+                                <dd class="text-lg font-medium text-gray-900">{{ $enAttente }}</dd>
                             </dl>
                         </div>
                     </div>
@@ -73,7 +73,7 @@
                         <div class="ml-5 w-0 flex-1">
                             <dl>
                                 <dt class="text-sm font-medium text-gray-500 truncate">Acceptés</dt>
-                                <dd class="text-lg font-medium text-gray-900">{{ \App\Models\Devis::where('statut', 'accepte')->count() }}</dd>
+                                <dd class="text-lg font-medium text-gray-900">{{ $acceptes }}</dd>
                             </dl>
                         </div>
                     </div>
@@ -91,7 +91,7 @@
                         <div class="ml-5 w-0 flex-1">
                             <dl>
                                 <dt class="text-sm font-medium text-gray-500 truncate">Montant total</dt>
-                                <dd class="text-lg font-medium text-gray-900">{{ number_format(\App\Models\Devis::sum('montant_total'), 2) }}€</dd>
+                                <dd class="text-lg font-medium text-gray-900">{{ number_format($montantTotal, 2) }}€</dd>
                             </dl>
                         </div>
                     </div>
@@ -136,74 +136,78 @@
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
-                        @forelse(\App\Models\Devis::with('client')->latest()->get() as $devis)
+                        @forelse($devis as $devisItem)
                         <tr class="hover:bg-gray-50">
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-medium text-gray-900">{{ $devis->reference ?? 'N/A' }}</div>
+                                <div class="text-sm font-medium text-gray-900">{{ $devisItem->reference ?? 'N/A' }}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center">
                                     <div class="flex-shrink-0 h-8 w-8">
                                         <div class="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center">
                                             <span class="text-xs font-medium text-primary">
-                                                {{ strtoupper(substr($devis->client->nom ?? 'N/A', 0, 2)) }}
+                                                {{ strtoupper(substr($devisItem->client->nom_entreprise ?? 'N/A', 0, 2)) }}
                                             </span>
                                         </div>
                                     </div>
                                     <div class="ml-3">
                                         <div class="text-sm font-medium text-gray-900">
-                                            {{ $devis->client->nom ?? 'N/A' }}
+                                            {{ $devisItem->client->nom_entreprise ?? 'N/A' }}
                                         </div>
                                         <div class="text-sm text-gray-500">
-                                            {{ $devis->client->email ?? 'N/A' }}
+                                            {{ $devisItem->client->email ?? 'N/A' }}
                                         </div>
                                     </div>
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                {{ $devis->created_at->format('d/m/Y') }}
+                                {{ $devisItem->created_at->format('d/m/Y') }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                {{ number_format($devis->montant_ht ?? 0, 2) }}€
+                                {{ number_format($devisItem->montant_total / 1.2, 2) }}€
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                {{ number_format($devis->montant_total ?? 0, 2) }}€
+                                {{ number_format($devisItem->montant_total ?? 0, 2) }}€
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full 
-                                    @if($devis->statut === 'en_attente') bg-yellow-100 text-yellow-800
-                                    @elseif($devis->statut === 'accepte') bg-green-100 text-green-800
-                                    @elseif($devis->statut === 'refuse') bg-red-100 text-red-800
-                                    @elseif($devis->statut === 'expire') bg-gray-100 text-gray-800
+                                    @if($devisItem->statut === 'brouillon') bg-yellow-100 text-yellow-800
+                                    @elseif($devisItem->statut === 'accepte') bg-green-100 text-green-800
+                                    @elseif($devisItem->statut === 'refuse') bg-red-100 text-red-800
+                                    @elseif($devisItem->statut === 'expire') bg-gray-100 text-gray-800
                                     @else bg-gray-100 text-gray-800
                                     @endif">
-                                    {{ ucfirst($devis->statut ?? 'N/A') }}
+                                    {{ ucfirst($devisItem->statut ?? 'N/A') }}
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                @if($devis->date_validite)
-                                    {{ \Carbon\Carbon::parse($devis->date_validite)->format('d/m/Y') }}
+                                @if($devisItem->date_validite)
+                                    {{ \Carbon\Carbon::parse($devisItem->date_validite)->format('d/m/Y') }}
                                 @else
                                     N/A
                                 @endif
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 <div class="flex items-center justify-end space-x-2">
-                                    <a href="{{ route('commercial.devis.show', $devis) }}" 
+                                    <a href="{{ route('commercial.devis.show', $devisItem) }}" 
                                        class="text-primary hover:text-primary-dark">
                                         <i class="fas fa-eye"></i>
                                     </a>
-                                    <a href="{{ route('commercial.devis.edit', $devis) }}" 
+                                    <a href="{{ route('commercial.devis.edit', $devisItem) }}" 
                                        class="text-blue-600 hover:text-blue-900">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <a href="{{ route('commercial.devis.download', $devis) }}" 
+                                    <a href="{{ route('commercial.devis.download', $devisItem) }}" 
                                        class="text-green-600 hover:text-green-900">
                                         <i class="fas fa-download"></i>
                                     </a>
-                                    <button class="text-red-600 hover:text-red-900">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
+                                    <form action="{{ route('commercial.devis.destroy', $devisItem) }}" method="POST" class="inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce devis ?')">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
                                 </div>
                             </td>
                         </tr>

@@ -4,6 +4,12 @@ use App\Http\Middleware\RedirectAccordingToRole;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\DemandeDemoController;
+use App\Http\Controllers\Commercial\FactureController;
+
+// Inclure les routes temporaires
+if (app()->environment('local')) {
+    require __DIR__.'/temp-routes.php';
+}
 
 // Routes publiques
 Route::get('/solutions', [App\Http\Controllers\PublicController::class, 'solutions'])->name('solutions');
@@ -283,24 +289,31 @@ Route::prefix('commercial')->group(function () {
             })->name('commercial.demandes-devis.edit');
         });
 
-        // Routes pour la gestion des devis
+        // Routes pour la gestion des factures (commerciaux)
+        Route::resource('factures', FactureController::class);
+        
+        // Routes supplémentaires pour les factures
+        Route::prefix('factures')->name('factures.')->group(function () {
+            Route::get('{facture}/download', [FactureController::class, 'downloadPdf'])->name('download');
+            Route::post('{facture}/send', [FactureController::class, 'sendByEmail'])->name('send');
+            Route::patch('{facture}/mark-as-paid', [FactureController::class, 'markAsPaid'])->name('mark-as-paid');
+            Route::delete('{facture}/cancel', [FactureController::class, 'cancel'])->name('cancel');
+        });
+        
+        // Routes pour la gestion des devis (commerciaux)
         Route::prefix('devis')->group(function () {
-            Route::get('/', function () {
-                return view('commercial.devis.index');
-            })->name('commercial.devis.index');
-            Route::get('/create', function () {
-                return view('commercial.devis.create');
-            })->name('commercial.devis.create');
-            Route::get('/{devis}', function ($devis) {
-                return view('commercial.devis.show', compact('devis'));
-            })->name('commercial.devis.show');
-            Route::get('/{devis}/edit', function ($devis) {
-                return view('commercial.devis.edit', compact('devis'));
-            })->name('commercial.devis.edit');
+            Route::get('/', [\App\Http\Controllers\Commercial\DevisController::class, 'index'])->name('commercial.devis.index');
+            Route::get('/create', [\App\Http\Controllers\Commercial\DevisController::class, 'create'])->name('commercial.devis.create');
+            Route::post('/', [\App\Http\Controllers\Commercial\DevisController::class, 'store'])->name('commercial.devis.store');
+            Route::get('/{devis}', [\App\Http\Controllers\Commercial\DevisController::class, 'show'])->name('commercial.devis.show');
+            Route::get('/{devis}/edit', [\App\Http\Controllers\Commercial\DevisController::class, 'edit'])->name('commercial.devis.edit');
+            Route::put('/{devis}', [\App\Http\Controllers\Commercial\DevisController::class, 'update'])->name('commercial.devis.update');
+            Route::delete('/{devis}', [\App\Http\Controllers\Commercial\DevisController::class, 'destroy'])->name('commercial.devis.destroy');
             Route::get('/{devis}/download', function ($devis) {
                 // Logique de téléchargement
                 return response()->json(['message' => 'Téléchargement en cours']);
             })->name('commercial.devis.download');
+            Route::get('/service-items', [\App\Http\Controllers\Commercial\DevisController::class, 'getServiceItems'])->name('commercial.devis.service-items');
         });
 
         // Routes pour la gestion des factures

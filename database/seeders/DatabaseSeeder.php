@@ -49,5 +49,10 @@ class DatabaseSeeder extends Seeder
         Client::create([
             'user_id' => $client->id,
         ]);
+
+        // Appeler le seeder des services
+        $this->call([
+            ServiceSeeder::class,
+        ]);
     }
 }
