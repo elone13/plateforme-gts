@@ -28,3 +28,6 @@ test-*.php
 debug-*.php
 check-*.php
 verify-*.php
+
+# Fichiers de documentation
+*.md
