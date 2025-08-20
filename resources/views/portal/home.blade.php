@@ -204,7 +204,95 @@ GTS Afrique offre aux entreprises un accompagnement sur mesure afin d'optimiser 
             </div>
         </section>
 
-
+        <!-- Section Inscription Client -->
+        <section class="bg-gray-50 py-20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                        Accédez à votre espace client
+                    </h2>
+                    <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                        Créez votre compte pour consulter vos devis, suivre vos projets et accéder à votre espace personnel
+                    </p>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                    <!-- Informations -->
+                    <div class="text-left">
+                        <div class="space-y-6">
+                            <div class="flex items-start space-x-4">
+                                <div class="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-file-invoice text-primary text-lg"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Consultez vos devis</h3>
+                                    <p class="text-gray-600">Accédez à l'historique complet de vos devis et téléchargez-les en PDF</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start space-x-4">
+                                <div class="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-chart-line text-primary text-lg"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Suivez vos projets</h3>
+                                    <p class="text-gray-600">Gardez un œil sur l'avancement de vos projets et services</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start space-x-4">
+                                <div class="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-bell text-primary text-lg"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Notifications en temps réel</h3>
+                                    <p class="text-gray-600">Recevez des alertes sur l'état de vos devis et projets</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Formulaire d'inscription rapide -->
+                    <div class="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-6 text-center">Créer mon compte</h3>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Nom complet</label>
+                                <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Votre nom">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                                <input type="email" class="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" placeholder="votre@email.com">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Téléphone (optionnel)</label>
+                                <input type="tel" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Votre téléphone">
+                            </div>
+                            
+                            <button type="button" class="w-full bg-primary text-white font-semibold py-3 px-6 rounded-lg hover:bg-gray-800 transition-colors duration-300">
+                                Créer mon compte
+                            </button>
+                        </div>
+                        
+                        <div class="mt-6 text-center">
+                            <p class="text-sm text-gray-600">
+                                Déjà un compte ? 
+                                <a href="{{ route('login') }}" class="text-primary hover:text-gray-800 font-medium">Se connecter</a>
+                            </p>
+                        </div>
+                        
+                        <div class="mt-4 text-center">
+                            <a href="{{ route('client.register') }}" class="text-sm text-primary hover:text-gray-800 font-medium">
+                                Voir le formulaire complet →
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
         <!-- CTA Demande de démo -->
         <section class="bg-[#e2e0c7] relative overflow-hidden">

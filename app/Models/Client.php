@@ -14,6 +14,7 @@ class Client extends Model
     protected $primaryKey = 'idclient';
 
     protected $fillable = [
+        'nom',
         'nom_entreprise',
         'contact_principal',
         'email',
@@ -25,6 +26,7 @@ class Client extends Model
         'source',
         'derniere_interaction',
         'user_id',
+        'date_inscription',
     ];
 
     protected $casts = [
@@ -36,7 +38,7 @@ class Client extends Model
      */
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     /**
@@ -101,10 +103,7 @@ class Client extends Model
      */
     public function getFacturesCountAttribute()
     {
-        return $this->devis()->with('items.factures')->get()
-            ->flatMap->items
-            ->flatMap->factures
-            ->count();
+        return $this->factures()->count();
     }
 
     /**
@@ -127,7 +126,7 @@ class Client extends Model
     public function hasValidatedPayment(): bool
     {
         return $this->factures()
-            ->where('statut', 'payee')
+            ->where('statut_paiement', 'paye')
             ->exists();
     }
 
@@ -150,7 +149,7 @@ class Client extends Model
     public function getFirstValidatedPayment()
     {
         return $this->factures()
-            ->where('statut', 'payee')
+            ->where('statut_paiement', 'paye')
             ->orderBy('date_paiement', 'asc')
             ->first();
     }
@@ -174,7 +173,7 @@ class Client extends Model
     {
         return $query->where('statut', 'prospect')
                     ->whereHas('factures', function ($q) {
-                        $q->where('statut', 'payee');
+                        $q->where('statut_paiement', 'paye');
                     });
     }
 
@@ -216,7 +215,8 @@ class Client extends Model
     public function scopeSearch($query, $search)
     {
         return $query->where(function($q) use ($search) {
-            $q->where('nom_entreprise', 'like', '%' . $search . '%')
+            $q->where('nom', 'like', '%' . $search . '%')
+              ->orWhere('nom_entreprise', 'like', '%' . $search . '%')
               ->orWhere('contact_principal', 'like', '%' . $search . '%')
               ->orWhere('email', 'like', '%' . $search . '%')
               ->orWhere('secteur_activite', 'like', '%' . $search . '%');

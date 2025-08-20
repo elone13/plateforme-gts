@@ -23,9 +23,11 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#fcd61b',
-                        'primary-dark': '#e6c200',
+                        primary: '#fbbf24',
+                        'primary-dark': '#f59e0b',
                         'primary-light': '#fde047',
+                        'primary-soft': '#fef3c7',
+                        'primary-muted': '#fef9e7',
                         secondary: '#1e40af',
                         'secondary-dark': '#1e3a8a',
                         'secondary-light': '#3b82f6',

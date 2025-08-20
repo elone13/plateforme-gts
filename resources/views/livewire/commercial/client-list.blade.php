@@ -11,7 +11,7 @@
                     <label for="recherche" class="block text-sm font-medium text-gray-700">Recherche</label>
                     <input type="text" wire:model.live.debounce.300ms="recherche" id="recherche"
                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"
-                           placeholder="Nom, contact, email...">
+                           placeholder="Nom, entreprise, contact, email...">
                 </div>
 
                 <!-- Filtre par statut -->
@@ -83,12 +83,15 @@
                                 <div class="flex-shrink-0 h-10 w-10">
                                     <div class="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center">
                                         <span class="text-sm font-medium text-primary">
-                                            {{ strtoupper(substr($client->nom_entreprise ?? $client->contact_principal, 0, 2)) }}
+                                            {{ strtoupper(substr($client->nom ?? $client->nom_entreprise ?? $client->contact_principal, 0, 2)) }}
                                         </span>
                                     </div>
                                 </div>
                                 <div class="ml-4">
-                                    <div class="text-sm font-medium text-gray-900">{{ $client->nom_entreprise ?? 'Particulier' }}</div>
+                                    <div class="text-sm font-medium text-gray-900">{{ $client->nom }}</div>
+                                    @if($client->nom_entreprise)
+                                        <div class="text-sm text-gray-600">{{ $client->nom_entreprise }}</div>
+                                    @endif
                                     <div class="text-sm text-gray-500">{{ $client->secteur_activite ?? 'Secteur non défini' }}</div>
                                 </div>
                             </div>

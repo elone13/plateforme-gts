@@ -17,7 +17,6 @@ class Facture extends Model
         'statut_paiement',
         'date_echeance',
         'date_paiement',
-        'statut',
     ];
 
     protected $casts = [
@@ -25,6 +24,26 @@ class Facture extends Model
         'date_echeance' => 'date',
         'date_paiement' => 'date',
     ];
+
+    /**
+     * Accesseur pour le statut (compatibilité avec l'ancien code)
+     */
+    public function getStatutAttribute()
+    {
+        // Mapper statut_paiement vers statut
+        switch ($this->statut_paiement) {
+            case 'paye':
+                return 'payee';
+            case 'en_attente':
+                return 'en_attente';
+            case 'en_retard':
+                return 'en_retard';
+            case 'annule':
+                return 'annule';
+            default:
+                return 'en_attente';
+        }
+    }
 
     /**
      * Get the devis that owns the facture.

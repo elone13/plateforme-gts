@@ -78,9 +78,17 @@
             <h3 class="text-lg font-medium text-gray-900 mb-4">Nouveau Client</h3>
             <form id="createClientForm" class="space-y-4">
                 <div>
-                    <label for="nom_entreprise" class="block text-sm font-medium text-gray-700">Nom de l'entreprise *</label>
-                    <input type="text" id="nom_entreprise" name="nom_entreprise" required
-                           class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary">
+                    <label for="nom" class="block text-sm font-medium text-gray-700">Nom complet *</label>
+                    <input type="text" id="nom" name="nom" required
+                           class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"
+                           placeholder="Nom et prénom du contact">
+                </div>
+                
+                <div>
+                    <label for="nom_entreprise" class="block text-sm font-medium text-gray-700">Nom de l'entreprise</label>
+                    <input type="text" id="nom_entreprise" name="nom_entreprise"
+                           class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"
+                           placeholder="Nom de l'entreprise (optionnel)">
                 </div>
                 
                 <div>
@@ -147,9 +155,8 @@ document.getElementById('createClientForm').addEventListener('submit', function(
         method: 'POST',
         headers: {
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-            'Content-Type': 'application/json',
         },
-        body: JSON.stringify(Object.fromEntries(formData))
+        body: formData
     })
     .then(response => response.json())
     .then(data => {
@@ -158,12 +165,21 @@ document.getElementById('createClientForm').addEventListener('submit', function(
             // Recharger la liste des clients
             window.location.reload();
         } else {
-            alert('Erreur lors de la création du client');
+            // Afficher les erreurs de validation
+            if (data.errors) {
+                let errorMessage = 'Erreurs de validation:\n';
+                Object.keys(data.errors).forEach(field => {
+                    errorMessage += `- ${field}: ${data.errors[field].join(', ')}\n`;
+                });
+                alert(errorMessage);
+            } else {
+                alert('Erreur lors de la création du client');
+            }
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Erreur lors de la création du client');
+        alert('Erreur lors de la création du client: ' + error.message);
     });
 });
 </script>

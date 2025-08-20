@@ -34,10 +34,20 @@
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label for="nom_entreprise" class="block text-sm font-medium text-gray-700">Nom de l'entreprise *</label>
-                            <input type="text" id="nom_entreprise" name="nom_entreprise" value="{{ old('nom_entreprise') }}" required
+                            <label for="nom" class="block text-sm font-medium text-gray-700">Nom complet *</label>
+                            <input type="text" id="nom" name="nom" value="{{ old('nom') }}" required
+                                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary @error('nom') border-red-500 @enderror"
+                                   placeholder="Nom et prénom du contact">
+                            @error('nom')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        
+                        <div>
+                            <label for="nom_entreprise" class="block text-sm font-medium text-gray-700">Nom de l'entreprise</label>
+                            <input type="text" id="nom_entreprise" name="nom_entreprise" value="{{ old('nom_entreprise') }}"
                                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary @error('nom_entreprise') border-red-500 @enderror"
-                                   placeholder="Nom de l'entreprise ou 'Particulier'">
+                                   placeholder="Nom de l'entreprise (optionnel)">
                             @error('nom_entreprise')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror

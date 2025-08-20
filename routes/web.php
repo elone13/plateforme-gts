@@ -91,6 +91,12 @@ Route::get('/register', function () {
     return view('auth.register');
 })->name('register')->middleware(RedirectAccordingToRole::class);
 
+// Routes d'inscription client (publiques)
+Route::prefix('client')->name('client.')->group(function () {
+    Route::get('/register', [App\Http\Controllers\Client\RegisterController::class, 'showRegistrationForm'])->name('register');
+    Route::post('/register', [App\Http\Controllers\Client\RegisterController::class, 'register'])->name('register.post');
+});
+
 // Client routes (authenticated clients stay on public portal)
 Route::middleware([
     'auth:sanctum',
@@ -98,35 +104,35 @@ Route::middleware([
     'verified',
 ])->group(function () {
     // Client specific routes
-    Route::prefix('client')->group(function () {
+    Route::prefix('client')->name('client.')->group(function () {
+        // Route principale du profil (compatible avec l'espace existant)
         Route::get('/profile', function () {
-            $user = auth()->user();
-            
-            if ($user->role === 'admin') {
-                // Redirect admins to their respective dashboards
-                if ($user->administrateur) {
-                    if ($user->administrateur->type === 'manager') {
-                        return redirect()->route('manager.dashboard');
-                    } elseif ($user->administrateur->type === 'commercial') {
-                        return redirect()->route('commercial.dashboard');
-                    }
-                }
-                return redirect()->route('admin.dashboard');
-            }
-            
-            // Clients stay on public portal with profile access
             return view('portal.client-profile');
-        })->name('client.profile');
+        })->name('profile');
         
+        // Route pour voir les devis (compatible avec l'espace existant)
         Route::get('/devis', function () {
             return view('portal.client-devis');
-        })->name('client.devis');
+        })->name('devis');
         
+        // Route pour voir les factures (compatible avec l'espace existant)
         Route::get('/factures', function () {
             return view('portal.client-factures');
-        })->name('client.factures');
+        })->name('factures');
         
-
+                         // Routes avancées pour le profil client (sous un préfixe différent)
+                 Route::prefix('advanced-profile')->name('advanced-profile.')->group(function () {
+                     Route::get('/', [App\Http\Controllers\Client\ProfileController::class, 'show'])->name('show');
+                     Route::put('/update', [App\Http\Controllers\Client\ProfileController::class, 'update'])->name('update');
+                     
+                     // Routes pour les devis du client
+                     Route::prefix('devis')->name('devis.')->group(function () {
+                         Route::get('/{devis}', [App\Http\Controllers\Client\ProfileController::class, 'showDevis'])->name('show');
+                         Route::get('/{devis}/preview', [App\Http\Controllers\Client\ProfileController::class, 'previewDevis'])->name('preview');
+                         Route::get('/{devis}/download', [App\Http\Controllers\Client\ProfileController::class, 'downloadDevis'])->name('download');
+                         Route::post('/{devis}/validate', [App\Http\Controllers\Client\ProfileController::class, 'validateDevis'])->name('validate');
+                     });
+                 });
     });
 });
 
@@ -309,11 +315,13 @@ Route::prefix('commercial')->group(function () {
             Route::get('/{devis}/edit', [\App\Http\Controllers\Commercial\DevisController::class, 'edit'])->name('commercial.devis.edit');
             Route::put('/{devis}', [\App\Http\Controllers\Commercial\DevisController::class, 'update'])->name('commercial.devis.update');
             Route::delete('/{devis}', [\App\Http\Controllers\Commercial\DevisController::class, 'destroy'])->name('commercial.devis.destroy');
-            Route::get('/{devis}/download', function ($devis) {
-                // Logique de téléchargement
-                return response()->json(['message' => 'Téléchargement en cours']);
-            })->name('commercial.devis.download');
-            Route::get('/service-items', [\App\Http\Controllers\Commercial\DevisController::class, 'getServiceItems'])->name('commercial.devis.service-items');
+            Route::get('/{devis}/download', [\App\Http\Controllers\Commercial\DevisController::class, 'download'])->name('commercial.devis.download');
+Route::get('/{devis}/preview', [\App\Http\Controllers\Commercial\DevisController::class, 'preview'])->name('commercial.devis.preview');
+
+// Routes alternatives pour la génération PDF
+Route::get('/{devis}/pdf-alternative', [\App\Http\Controllers\Commercial\DevisPdfController::class, 'generatePDF'])->name('commercial.devis.pdf.alternative');
+Route::get('/{devis}/html', [\App\Http\Controllers\Commercial\DevisPdfController::class, 'showHTML'])->name('commercial.devis.html');
+Route::get('/{devis}/download-html', [\App\Http\Controllers\Commercial\DevisPdfController::class, 'downloadHTML'])->name('commercial.devis.download.html');
         });
 
         // Routes pour la gestion des factures

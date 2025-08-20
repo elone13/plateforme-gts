@@ -1,6 +1,6 @@
 @extends('layouts.commercial')
 
-@section('page-title', 'Fiche Client - ' . $client->nom_entreprise)
+@section('page-title', 'Fiche Client - ' . $client->nom)
 @section('page-description', 'Gérer et suivre ce client')
 
 @section('content')
@@ -11,7 +11,10 @@
             <div class="px-6 py-4 border-b border-gray-200">
                 <div class="flex items-center justify-between">
                     <div>
-                        <h1 class="text-2xl font-bold text-gray-900">{{ $client->nom_entreprise }}</h1>
+                        <h1 class="text-2xl font-bold text-gray-900">{{ $client->nom }}</h1>
+                        @if($client->nom_entreprise)
+                            <p class="text-sm text-gray-600">{{ $client->nom_entreprise }}</p>
+                        @endif
                         <p class="text-sm text-gray-600">{{ $client->contact_principal }} - {{ $client->email }}</p>
                     </div>
                     <div class="flex items-center space-x-3">
@@ -36,6 +39,10 @@
                     </div>
                     <div class="p-6">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Nom complet</label>
+                                <p class="mt-1 text-sm text-gray-900">{{ $client->nom }}</p>
+                            </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Statut</label>
                                 <span class="mt-1 inline-flex px-2 py-1 text-xs font-semibold rounded-full 

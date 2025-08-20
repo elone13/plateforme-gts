@@ -85,7 +85,7 @@
                     </div>
                 </a>
 
-                <a href="{{ route('commercial.devis.create') }}" class="group relative bg-gradient-to-r from-blue-500 to-blue-600 p-6 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200">
+                <button wire:click="$dispatch('openCreateDevisModal')" class="group relative bg-gradient-to-r from-blue-500 to-blue-600 p-6 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200">
                     <div class="flex items-center">
                         <div class="flex-shrink-0">
                             <i class="fas fa-file-invoice text-2xl text-white group-hover:scale-110 transition-transform duration-200"></i>
@@ -98,7 +98,7 @@
                     <div class="absolute top-4 right-4">
                         <i class="fas fa-arrow-right text-white/60 group-hover:text-white group-hover:translate-x-1 transition-all duration-200"></i>
                     </div>
-                </a>
+                </button>
 
                 <a href="{{ route('commercial.clients.create') }}" class="group relative bg-gradient-to-r from-purple-500 to-purple-600 p-6 rounded-lg hover:from-purple-600 hover:to-purple-700 transition-all duration-200">
                     <div class="flex items-center">
@@ -164,4 +164,7 @@
         </div>
     </div>
 </div>
+
+<!-- Composant Livewire pour le modal de création de devis -->
+@livewire('commercial.create-devis-modal')
 @endsection 

@@ -1,6 +1,6 @@
 @extends('layouts.commercial')
 
-@section('page-title', 'Modifier Client - ' . $client->nom_entreprise)
+@section('page-title', 'Modifier Client - ' . $client->nom)
 @section('page-description', 'Modifier les informations de ce client')
 
 @section('content')
@@ -12,7 +12,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <h1 class="text-2xl font-bold text-gray-900">Modifier le client</h1>
-                        <p class="text-sm text-gray-600">{{ $client->nom_entreprise }}</p>
+                        <p class="text-sm text-gray-600">{{ $client->nom }}</p>
                     </div>
                     <div class="flex items-center space-x-3">
                         <a href="{{ route('commercial.clients.show', $client) }}" class="btn-secondary">
@@ -35,8 +35,17 @@
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label for="nom_entreprise" class="block text-sm font-medium text-gray-700">Nom de l'entreprise *</label>
-                            <input type="text" id="nom_entreprise" name="nom_entreprise" value="{{ old('nom_entreprise', $client->nom_entreprise) }}" required
+                            <label for="nom" class="block text-sm font-medium text-gray-700">Nom complet *</label>
+                            <input type="text" id="nom" name="nom" value="{{ old('nom', $client->nom) }}" required
+                                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary @error('nom') border-red-500 @enderror">
+                            @error('nom')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        
+                        <div>
+                            <label for="nom_entreprise" class="block text-sm font-medium text-gray-700">Nom de l'entreprise</label>
+                            <input type="text" id="nom_entreprise" name="nom_entreprise" value="{{ old('nom_entreprise', $client->nom_entreprise) }}"
                                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary @error('nom_entreprise') border-red-500 @enderror">
                             @error('nom_entreprise')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>

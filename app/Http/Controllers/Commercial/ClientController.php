@@ -35,7 +35,8 @@ class ClientController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'nom_entreprise' => 'required|string|max:255',
+            'nom' => 'required|string|max:255',
+            'nom_entreprise' => 'nullable|string|max:255',
             'contact_principal' => 'required|string|max:255',
             'email' => 'required|email|unique:clients,email',
             'telephone' => 'nullable|string|max:20',
@@ -52,6 +53,7 @@ class ClientController extends Controller
         }
 
         $client = Client::create([
+            'nom' => $request->nom,
             'nom_entreprise' => $request->nom_entreprise,
             'contact_principal' => $request->contact_principal,
             'email' => $request->email,
@@ -78,7 +80,8 @@ class ClientController extends Controller
     public function update(Request $request, Client $client)
     {
         $validator = Validator::make($request->all(), [
-            'nom_entreprise' => 'required|string|max:255',
+            'nom' => 'required|string|max:255',
+            'nom_entreprise' => 'nullable|string|max:255',
             'contact_principal' => 'required|string|max:255',
             'email' => 'required|email|unique:clients,email,' . $client->id,
             'telephone' => 'nullable|string|max:20',
@@ -93,6 +96,7 @@ class ClientController extends Controller
         }
 
         $client->update([
+            'nom' => $request->nom,
             'nom_entreprise' => $request->nom_entreprise,
             'contact_principal' => $request->contact_principal,
             'email' => $request->email,

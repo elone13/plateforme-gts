@@ -52,7 +52,8 @@ class ClientList extends Component
         // Filtre par recherche
         if (!empty($this->recherche)) {
             $query->where(function($q) {
-                $q->where('nom_entreprise', 'like', '%' . $this->recherche . '%')
+                $q->where('nom', 'like', '%' . $this->recherche . '%')
+                  ->orWhere('nom_entreprise', 'like', '%' . $this->recherche . '%')
                   ->orWhere('contact_principal', 'like', '%' . $this->recherche . '%')
                   ->orWhere('email', 'like', '%' . $this->recherche . '%')
                   ->orWhere('secteur_activite', 'like', '%' . $this->recherche . '%');

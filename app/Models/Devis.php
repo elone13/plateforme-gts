@@ -14,6 +14,7 @@ class Devis extends Model
         'date',
         'client_idclient',
         'statut',
+        'date_validation',
         'montant_total',
         'conditions',
         'date_validite',
@@ -37,6 +38,7 @@ class Devis extends Model
     protected $casts = [
         'date' => 'date',
         'date_validite' => 'date',
+        'date_validation' => 'datetime',
         'date_facturation' => 'date',
         'date_echeance' => 'date',
         'date_paiement' => 'datetime',
