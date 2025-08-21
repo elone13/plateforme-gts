@@ -1,0 +1,17 @@
+# Configuration Mailtrap pour GTS Afrique
+# Copiez ces lignes dans votre fichier .env
+
+# Configuration Email Mailtrap
+MAIL_MAILER=smtp
+MAIL_HOST=sandbox.smtp.mailtrap.io
+MAIL_PORT=2525
+MAIL_USERNAME=e3cbc614419075
+MAIL_PASSWORD=dc91aa9515cf7e
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS="noreply@gts-afrique.com"
+MAIL_FROM_NAME="GTS Afrique"
+
+# Configuration de l'application
+APP_NAME="GTS Afrique"
+APP_URL=http://localhost:8000
+

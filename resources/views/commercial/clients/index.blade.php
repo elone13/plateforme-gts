@@ -91,11 +91,7 @@
                            placeholder="Nom de l'entreprise (optionnel)">
                 </div>
                 
-                <div>
-                    <label for="contact_principal" class="block text-sm font-medium text-gray-700">Contact principal *</label>
-                    <input type="text" id="contact_principal" name="contact_principal" required
-                           class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary">
-                </div>
+
                 
                 <div>
                     <label for="email" class="block text-sm font-medium text-gray-700">Email *</label>

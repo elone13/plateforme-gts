@@ -8,6 +8,7 @@ use App\Mail\NouvelleDemandeDemo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Auth;
 
 class DemandeDemoController extends Controller
 {
@@ -52,14 +53,48 @@ class DemandeDemoController extends Controller
     }
 
     /**
+     * Afficher le formulaire de demande de démo
+     */
+    public function create()
+    {
+        $user = Auth::user();
+        $client = null;
+        
+        if ($user && $user->role === 'client') {
+            $client = $user->client;
+        }
+        
+        return view('portal.contact', compact('client'));
+    }
+
+    /**
      * Stocker une nouvelle demande de démo (public)
      */
     public function store(Request $request)
     {
+        // Si l'utilisateur est connecté et est un client, utiliser ses informations
+        $user = Auth::user();
+        $client = null;
+        
+        if ($user && $user->role === 'client') {
+            $client = $user->client;
+            
+            // Pré-remplir avec les informations du client connecté
+            $request->merge([
+                'nom' => $client->nom,
+                'email' => $client->email,
+                'telephone' => $client->telephone ?: $request->telephone,
+                'societe' => $client->nom_entreprise ?: $request->societe,
+            ]);
+        }
+
         $validator = Validator::make($request->all(), [
             'nom' => 'required|string|max:45',
             'email' => 'required|email|max:45',
             'telephone' => 'required|string|max:45',
+            'nombre_vehicules' => 'nullable|string|max:50',
+            'societe' => 'nullable|string|max:100',
+            'jour_prefere' => 'nullable|string|max:50',
             'message' => 'nullable|string',
         ]);
 
@@ -72,10 +107,14 @@ class DemandeDemoController extends Controller
             'nom' => $request->nom,
             'email' => $request->email,
             'telephone' => $request->telephone,
+            'nombre_vehicules' => $request->nombre_vehicules,
+            'societe' => $request->societe,
+            'jour_prefere' => $request->jour_prefere,
             'message' => $request->message,
             'statut' => 'en_attente',
             'source' => $request->input('source', 'site_web'),
             'priorite' => $request->input('priorite', 'moyenne'),
+            'client_id' => $client ? $client->id : null, // Associer la demande au client si connecté
         ]);
 
         // Envoyer un email de confirmation au client

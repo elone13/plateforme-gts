@@ -45,6 +45,18 @@
                                 <label class="block text-sm font-medium text-gray-700">Téléphone</label>
                                 <p class="mt-1 text-sm text-gray-900">{{ $demandeDemo->telephone }}</p>
                             </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Société</label>
+                                <p class="mt-1 text-sm text-gray-900">{{ $demandeDemo->societe ?: 'Non renseigné' }}</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Nombre de véhicules</label>
+                                <p class="mt-1 text-sm text-gray-900">{{ $demandeDemo->nombre_vehicules ?: 'Non renseigné' }}</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Jour préféré</label>
+                                <p class="mt-1 text-sm text-gray-900">{{ $demandeDemo->jour_prefere ?: 'Non renseigné' }}</p>
+                            </div>
                         </div>
                     </div>
                 </div>

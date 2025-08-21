@@ -14,7 +14,10 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,
+            'admin.type' => \App\Http\Middleware\AdminTypeMiddleware::class,
             'redirect.role' => \App\Http\Middleware\RedirectAccordingToRole::class,
+            'verified.email' => \App\Http\Middleware\EnsureEmailIsVerified::class,
+            'conditional.email.verification' => \App\Http\Middleware\ConditionalEmailVerification::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

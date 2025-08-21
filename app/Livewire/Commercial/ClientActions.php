@@ -83,7 +83,7 @@ class ClientActions extends Component
         // Créer une demande de démo si c'est une démo
         if ($this->type_rdv === 'demo') {
             $this->client->demandeDemos()->create([
-                'nom' => $this->client->contact_principal,
+                'nom' => $this->client->nom,
                 'email' => $this->client->email,
                 'telephone' => $this->client->telephone,
                 'message' => $this->notes_rdv,

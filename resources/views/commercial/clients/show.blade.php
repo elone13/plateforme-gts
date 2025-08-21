@@ -15,7 +15,7 @@
                         @if($client->nom_entreprise)
                             <p class="text-sm text-gray-600">{{ $client->nom_entreprise }}</p>
                         @endif
-                        <p class="text-sm text-gray-600">{{ $client->contact_principal }} - {{ $client->email }}</p>
+                        <p class="text-sm text-gray-600">{{ $client->email }}</p>
                     </div>
                     <div class="flex items-center space-x-3">
                         <a href="{{ route('commercial.clients.edit', $client) }}" class="btn-secondary">

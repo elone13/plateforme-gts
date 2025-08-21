@@ -1,0 +1,29 @@
+# Configuration Email pour la vérification des comptes clients
+
+# Ajoutez ces lignes dans votre fichier .env :
+
+# Configuration Mail
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=votre_email@gmail.com
+MAIL_PASSWORD=votre_mot_de_passe_d_application
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS=votre_email@gmail.com
+MAIL_FROM_NAME="${APP_NAME}"
+
+# OU pour utiliser Mailtrap (test)
+# MAIL_MAILER=smtp
+# MAIL_HOST=sandbox.smtp.mailtrap.io
+# MAIL_PORT=2525
+# MAIL_USERNAME=votre_username_mailtrap
+# MAIL_PASSWORD=votre_password_mailtrap
+# MAIL_ENCRYPTION=tls
+
+# OU pour utiliser le log (développement local)
+# MAIL_MAILER=log
+
+# Configuration de l'application
+APP_NAME="GTS Afrique"
+APP_URL=http://localhost:8000
+

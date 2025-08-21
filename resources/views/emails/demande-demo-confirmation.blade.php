@@ -6,194 +6,214 @@
     <title>Confirmation - GTS Afrique</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
             color: #333;
-            max-width: 600px;
+            max-width: 650px;
             margin: 0 auto;
             padding: 20px;
+            background: #f8f9fa;
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            border: 1px solid #e1e5e9;
         }
         .header {
-            background-color: #3b82f6;
-            color: white;
-            padding: 30px;
+            background: #ffffff;
+            color: #2c3e50;
+            padding: 40px 30px;
             text-align: center;
-            border-radius: 8px 8px 0 0;
+            position: relative;
+            border-bottom: 3px solid #fcd61be6;
         }
-        .content {
-            background-color: #f9fafb;
-            padding: 30px;
-            border-radius: 0 0 8px 8px;
-        }
-        .rdv-details {
-            background-color: white;
-            border: 2px solid #3b82f6;
-            border-radius: 8px;
-            padding: 20px;
-            margin: 20px 0;
-        }
-        .rdv-details h3 {
-            color: #3b82f6;
-            margin-top: 0;
-        }
-        .rdv-info {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin: 15px 0;
-        }
-        .rdv-info div {
-            padding: 10px;
-            background-color: #f8fafc;
-            border-radius: 4px;
-        }
-        .rdv-info label {
-            font-weight: bold;
-            color: #64748b;
-            font-size: 12px;
-            text-transform: uppercase;
-        }
-        .rdv-info p {
-            margin: 5px 0 0 0;
-            font-size: 16px;
-        }
-        .btn {
-            display: inline-block;
-            background-color: #3b82f6;
-            color: white;
-            padding: 12px 24px;
-            text-decoration: none;
-            border-radius: 6px;
-            font-weight: bold;
-            margin: 20px 0;
-        }
-        .footer {
+        .logo-container {
+            margin: 0 auto 20px;
             text-align: center;
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #e5e7eb;
-            color: #6b7280;
-            font-size: 14px;
         }
         .logo {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 10px;
+            width: 120px;
+            height: auto;
+            max-height: 80px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .header h1 {
+            font-size: 28px;
+            margin: 0;
+            font-weight: 700;
+            color: #2c3e50;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header p {
+            font-size: 16px;
+            margin: 10px 0 0 0;
+            color: #34495e;
+            font-weight: 500;
+        }
+        .content {
+            padding: 40px 30px;
+        }
+        .greeting {
+            font-size: 20px;
+            margin-bottom: 25px;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        .message {
+            font-size: 16px;
+            margin-bottom: 25px;
+            color: #555;
+            line-height: 1.7;
+        }
+        .rdv-details {
+            background: #fcd61be6;
+            border: 2px solid #f39c12;
+            border-radius: 16px;
+            padding: 25px;
+            margin: 30px 0;
+            position: relative;
+        }
+        .rdv-details h3 {
+            color: #2c3e50;
+            margin-top: 0;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .rdv-info {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .rdv-info p {
+            margin: 8px 0;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+        .rdv-info strong {
+            color: #f39c12;
+        }
+        .cta-button {
+            display: inline-block;
+            background: #fcd61be6;
+            color: #2c3e50;
+            text-decoration: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            border: 2px solid #f39c12;
+        }
+        .cta-button:hover {
+            background: #f39c12;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(243, 156, 18, 0.3);
+        }
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .footer p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        .social-links {
+            margin: 20px 0;
+        }
+        .social-links a {
+            display: inline-block;
+            margin: 0 10px;
+            color: #fcd61be6;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .highlight {
+            background: #fcd61be6;
+            color: #2c3e50;
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            font-weight: 600;
+            text-align: center;
+        }
+        .icon {
+            width: 16px;
+            height: 16px;
+            margin-right: 8px;
+            vertical-align: middle;
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="logo">GTS AFRIQUE</div>
-        <h1>
-            @if($demandeDemo->statut === 'planifiee')
-                Rendez-vous confirmé !
-            @else
-                Demande reçue
-            @endif
-        </h1>
-    </div>
-
-    <div class="content">
-        <p>Bonjour <strong>{{ $demandeDemo->nom }}</strong>,</p>
-
-        @if($demandeDemo->statut === 'planifiee')
-            <p>Nous avons le plaisir de confirmer votre rendez-vous de démonstration de la plateforme GTS Afrique.</p>
-
-            <div class="rdv-details">
-                <h3>📅 Détails du rendez-vous</h3>
-                
-                <div class="rdv-info">
-                    <div>
-                        <label>Date</label>
-                        <p>{{ \Carbon\Carbon::parse($demandeDemo->date_rdv)->format('d/m/Y') }}</p>
-                    </div>
-                    <div>
-                        <label>Heure</label>
-                        <p>{{ \Carbon\Carbon::parse($demandeDemo->heure_rdv)->format('H:i') }}</p>
-                    </div>
-                    <div>
-                        <label>Durée</label>
-                        <p>{{ $demandeDemo->duree_rdv }} minutes</p>
-                    </div>
-                    <div>
-                        <label>Type</label>
-                        <p>{{ ucfirst(str_replace('_', ' ', $demandeDemo->type_rdv)) }}</p>
-                    </div>
-                </div>
-
-                @if($demandeDemo->type_rdv === 'en_ligne')
-                    <div style="margin-top: 20px;">
-                        <label style="font-weight: bold; color: #64748b; font-size: 12px; text-transform: uppercase;">Lien de réunion</label>
-                        <p style="margin: 5px 0 0 0; font-size: 16px;">
-                            <a href="{{ $demandeDemo->lien_reunion }}" style="color: #3b82f6; text-decoration: none;">
-                                {{ $demandeDemo->lien_reunion }}
-                            </a>
-                        </p>
-                    </div>
-                @endif
-
-                @if($demandeDemo->instructions_rdv)
-                    <div style="margin-top: 20px;">
-                        <label style="font-weight: bold; color: #64748b; font-size: 12px; text-transform: uppercase;">Instructions</label>
-                        <p style="margin: 5px 0 0 0; font-size: 16px;">{{ $demandeDemo->instructions_rdv }}</p>
-                    </div>
-                @endif
+    <div class="container">
+        <div class="header">
+            <div class="logo-container">
+                <img src="{{ asset('images/logo.png') }}" alt="GTS Afrique" class="logo">
             </div>
-
-            <p><strong>Préparez-vous pour votre démonstration :</strong></p>
-            <ul>
-                <li>Assurez-vous d'être disponible 5 minutes avant l'heure prévue</li>
-                @if($demandeDemo->type_rdv === 'en_ligne')
-                    <li>Testez votre connexion internet et votre micro</li>
-                    <li>Préparez vos questions sur la plateforme</li>
-                @endif
-                @if($demandeDemo->type_rdv === 'en_presentiel')
-                    <li>Préparez vos questions sur la plateforme</li>
-                    <li>Nous vous contacterons pour confirmer le lieu exact</li>
-                @endif
-                @if($demandeDemo->type_rdv === 'telephone')
-                    <li>Assurez-vous d'être dans un endroit calme</li>
-                    <li>Préparez vos questions sur la plateforme</li>
-                @endif
-            </ul>
-
-            @if($demandeDemo->type_rdv === 'en_ligne')
-                <a href="{{ $demandeDemo->lien_reunion }}" class="btn">Rejoindre la réunion</a>
-            @endif
-
-        @else
-            <p>Nous avons bien reçu votre demande de démonstration de la plateforme GTS Afrique.</p>
+            <h1>Confirmation de Demande de Démo</h1>
+            <p>Votre demande a été reçue avec succès</p>
+        </div>
+        
+        <div class="content">
+            <div class="greeting">
+                Bonjour {{ $demandeDemo->nom }},
+            </div>
             
-            <p><strong>Votre demande a été enregistrée avec les informations suivantes :</strong></p>
-            <ul>
-                <li><strong>Nom :</strong> {{ $demandeDemo->nom }}</li>
-                <li><strong>Email :</strong> {{ $demandeDemo->email }}</li>
-                @if($demandeDemo->telephone)
-                    <li><strong>Téléphone :</strong> {{ $demandeDemo->telephone }}</li>
-                @endif
-                <li><strong>Date de demande :</strong> {{ $demandeDemo->created_at->format('d/m/Y H:i') }}</li>
-            </ul>
-
-            @if($demandeDemo->message)
-                <p><strong>Votre message :</strong></p>
-                <p style="background-color: #f1f5f9; padding: 15px; border-radius: 4px; border-left: 4px solid #3b82f6;">
-                    {{ $demandeDemo->message }}
-                </p>
-            @endif
-
-            <p>Notre équipe commerciale va examiner votre demande et vous contactera dans les plus brefs délais pour planifier une démonstration personnalisée.</p>
-        @endif
-
-        <p>Si vous avez des questions ou souhaitez modifier votre rendez-vous, n'hésitez pas à nous contacter.</p>
-
-        <p>Cordialement,<br>
-        <strong>L'équipe GTS Afrique</strong></p>
-    </div>
-
-    <div class="footer">
-        <p>GTS Afrique - Plateforme de gestion de transport</p>
-        <p>Cet email a été envoyé automatiquement, merci de ne pas y répondre directement.</p>
+            <div class="message">
+                Nous avons bien reçu votre demande de démonstration pour nos solutions de gestion de flotte. 
+                Notre équipe commerciale va l'étudier et vous recontacter dans les plus brefs délais.
+            </div>
+            
+            <div class="highlight">
+                Votre demande est en cours de traitement
+            </div>
+            
+            <div class="rdv-details">
+                <h3>Détails de votre demande</h3>
+                <div class="rdv-info">
+                    <p><strong>Nom :</strong> {{ $demandeDemo->nom }}</p>
+                    <p><strong>Email :</strong> {{ $demandeDemo->email }}</p>
+                    <p><strong>Téléphone :</strong> {{ $demandeDemo->telephone }}</p>
+                    <p><strong>Société :</strong> {{ $demandeDemo->societe ?? 'Non spécifié' }}</p>
+                    <p><strong>Nombre de véhicules :</strong> {{ $demandeDemo->nombre_vehicules ?? 'Non spécifié' }}</p>
+                    <p><strong>Jour préféré :</strong> {{ $demandeDemo->jour_prefere ?? 'Non spécifié' }}</p>
+                    <p><strong>Message :</strong> {{ $demandeDemo->message ?? 'Aucun message' }}</p>
+                </div>
+            </div>
+            
+            <div class="message">
+                <strong>Prochaines étapes :</strong>
+                <ul style="margin: 15px 0; padding-left: 20px;">
+                    <li>Notre équipe va analyser vos besoins</li>
+                    <li>Nous vous proposerons un créneau de démonstration</li>
+                    <li>Vous recevrez un email de confirmation avec les détails</li>
+                </ul>
+            </div>
+            
+            <div style="text-align: center;">
+                <a href="{{ url('/') }}" class="cta-button">
+                    Retourner sur le site
+                </a>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <div class="social-links">
+                <a href="mailto:contact@gts-afrique.com">Contact</a>
+                <a href="{{ url('/') }}">Site web</a>
+            </div>
+            <p><strong>GTS Afrique</strong></p>
+            <p>Solutions de gestion de flotte intelligentes</p>
+            <p>© 2025 GTS Afrique. Tous droits réservés.</p>
+        </div>
     </div>
 </body>
 </html>

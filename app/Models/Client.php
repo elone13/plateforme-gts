@@ -16,12 +16,15 @@ class Client extends Model
     protected $fillable = [
         'nom',
         'nom_entreprise',
-        'contact_principal',
         'email',
         'telephone',
         'adresse',
         'secteur_activite',
+        'taille_entreprise',
+        'nombre_vehicules',
+        'budget_estime',
         'notes',
+        'newsletter',
         'statut',
         'source',
         'derniere_interaction',
@@ -217,7 +220,6 @@ class Client extends Model
         return $query->where(function($q) use ($search) {
             $q->where('nom', 'like', '%' . $search . '%')
               ->orWhere('nom_entreprise', 'like', '%' . $search . '%')
-              ->orWhere('contact_principal', 'like', '%' . $search . '%')
               ->orWhere('email', 'like', '%' . $search . '%')
               ->orWhere('secteur_activite', 'like', '%' . $search . '%');
         });

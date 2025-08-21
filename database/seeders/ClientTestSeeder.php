@@ -16,7 +16,6 @@ class ClientTestSeeder extends Seeder
         $clients = [
             [
                 'nom_entreprise' => 'TechSolutions SARL',
-                'contact_principal' => 'Jean Dupont',
                 'email' => 'jean.dupont@techsolutions.ci',
                 'telephone' => '+225 27 22 45 67 89',
                 'adresse' => '123 Avenue des Technologies, Abidjan',
@@ -28,7 +27,6 @@ class ClientTestSeeder extends Seeder
             ],
             [
                 'nom_entreprise' => 'CommercePlus',
-                'contact_principal' => 'Marie Konan',
                 'email' => 'm.konan@commerceplus.ci',
                 'telephone' => '+225 27 21 34 56 78',
                 'adresse' => '456 Boulevard du Commerce, Yamoussoukro',
@@ -40,7 +38,6 @@ class ClientTestSeeder extends Seeder
             ],
             [
                 'nom_entreprise' => 'ServicesPro',
-                'contact_principal' => 'Pierre Kouassi',
                 'email' => 'p.kouassi@servicespro.ci',
                 'telephone' => '+225 27 23 45 67 89',
                 'adresse' => '789 Rue des Services, Bouaké',
@@ -52,7 +49,6 @@ class ClientTestSeeder extends Seeder
             ],
             [
                 'nom_entreprise' => 'IndustrieModerne',
-                'contact_principal' => 'Sophie Traoré',
                 'email' => 's.traore@industriemoderne.ci',
                 'telephone' => '+225 27 24 56 78 90',
                 'adresse' => '321 Avenue Industrielle, San-Pédro',
@@ -64,7 +60,6 @@ class ClientTestSeeder extends Seeder
             ],
             [
                 'nom_entreprise' => 'StartupInnov',
-                'contact_principal' => 'Alexandre Yao',
                 'email' => 'a.yao@startupinnov.ci',
                 'telephone' => '+225 27 25 67 89 01',
                 'adresse' => '654 Rue de l\'Innovation, Korhogo',

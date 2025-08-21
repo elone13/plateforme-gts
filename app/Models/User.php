@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -10,7 +10,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens;
 
@@ -30,6 +30,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'created_by_commercial',
     ];
 
     /**
@@ -79,7 +80,7 @@ class User extends Authenticatable
      */
     public function administrateur()
     {
-        return $this->hasOne(Administrateur::class);
+        return $this->hasOne(Administrateur::class, 'user_id');
     }
 
     /**
@@ -96,5 +97,41 @@ class User extends Authenticatable
     public function isClient()
     {
         return $this->role === 'client';
+    }
+
+    /**
+     * Get the demo requests associated with the user's email.
+     */
+    public function demandesDemo()
+    {
+        return $this->hasMany(DemandeDemo::class, 'email', 'email');
+    }
+
+    /**
+     * Check if email verification is required for this user.
+     */
+    public function requiresEmailVerification(): bool
+    {
+        // Si c'est un client créé par un commercial, pas besoin de vérification
+        if ($this->role === 'client' && $this->created_by_commercial) {
+            return false;
+        }
+        
+        // Pour tous les autres utilisateurs, vérification requise
+        return true;
+    }
+
+    /**
+     * Check if the user's email is verified (considering commercial creation).
+     */
+    public function isEmailVerified(): bool
+    {
+        // Si c'est un client créé par un commercial, considérer comme vérifié
+        if ($this->role === 'client' && $this->created_by_commercial) {
+            return true;
+        }
+        
+        // Sinon, utiliser la logique standard
+        return !is_null($this->email_verified_at);
     }
 }

@@ -7,10 +7,35 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Client;
 use App\Models\Devis;
+use App\Models\DemandeDemo;
 
 class ProfileController extends Controller
 {
-
+    /**
+     * Afficher le profil du client avec ses demandes de démo
+     */
+    public function show()
+    {
+        $user = Auth::user();
+        $client = Client::where('user_id', $user->id)->first();
+        
+        // Si le client n'existe pas, le créer automatiquement
+        if (!$client) {
+            $client = Client::create([
+                'user_id' => $user->id,
+                'nom' => $user->name,
+                'email' => $user->email,
+                'date_inscription' => now(),
+            ]);
+        }
+        
+        // Récupérer les demandes de démo associées à l'email de l'utilisateur
+        $demandesDemo = DemandeDemo::where('email', $user->email)
+            ->orderBy('created_at', 'desc')
+            ->get();
+        
+        return view('portal.client-profile', compact('client', 'demandesDemo'));
+    }
 
     /**
      * Mettre à jour le profil du client
@@ -20,14 +45,20 @@ class ProfileController extends Controller
         $user = Auth::user();
         $client = Client::where('user_id', $user->id)->first();
         
+        // Si le client n'existe pas, le créer automatiquement
         if (!$client) {
-            return redirect()->route('client.profile')->with('error', 'Profil client non trouvé.');
+            $client = Client::create([
+                'user_id' => $user->id,
+                'nom' => $user->name,
+                'email' => $user->email,
+                'date_inscription' => now(),
+            ]);
         }
         
         $request->validate([
             'nom' => ['required', 'string', 'max:255'],
             'nom_entreprise' => ['nullable', 'string', 'max:255'],
-            'contact_principal' => ['nullable', 'string', 'max:255'],
+
             'telephone' => ['nullable', 'string', 'max:20'],
             'adresse' => ['nullable', 'string', 'max:500'],
             'secteur_activite' => ['nullable', 'string', 'max:255'],
@@ -38,7 +69,7 @@ class ProfileController extends Controller
             $client->update([
                 'nom' => $request->nom,
                 'nom_entreprise' => $request->nom_entreprise,
-                'contact_principal' => $request->contact_principal,
+    
                 'telephone' => $request->telephone,
                 'adresse' => $request->adresse,
                 'secteur_activite' => $request->secteur_activite,

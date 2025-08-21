@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\DemandeDemoController;
 use App\Http\Controllers\Commercial\FactureController;
+use Illuminate\Http\Request;
 
 // Inclure les routes temporaires
 if (app()->environment('local')) {
@@ -22,9 +23,7 @@ Route::get('/test-colors', function() {
     return view('test-colors');
 })->name('test.colors');
 
-Route::get('/contact', function () {
-    return view('portal.contact');
-})->name('contact');
+Route::get('/contact', [App\Http\Controllers\DemandeDemoController::class, 'create'])->name('contact');
 
 // Route pour le formulaire de demande de démo
 Route::post('/demande-demo', [DemandeDemoController::class, 'store'])->name('demande-demo.store');
@@ -54,12 +53,68 @@ Route::get('/test-email', function () {
     }
 })->name('test.email');
 
+// Route pour créer des demandes de démo de test avec emails personnalisés
+Route::get('/create-demo-test', function () {
+    return view('create-demo-test');
+})->name('create.demo.test');
+
+Route::post('/create-demo-test', function (Request $request) {
+    $request->validate([
+        'nom' => 'required|string|max:45',
+        'email' => 'required|email|max:45',
+        'telephone' => 'required|string|max:45',
+        'nombre_vehicules' => 'nullable|string|max:50',
+        'societe' => 'nullable|string|max:100',
+        'jour_prefere' => 'nullable|string|max:50',
+        'message' => 'nullable|string',
+        'statut' => 'required|in:en_attente,acceptee,refusee,en_cours,terminee,planifiee',
+    ]);
+
+    try {
+        $demande = \App\Models\DemandeDemo::create([
+            'date' => now()->format('Y-m-d'),
+            'nom' => $request->nom,
+            'email' => $request->email,
+            'telephone' => $request->telephone,
+            'nombre_vehicules' => $request->nombre_vehicules,
+            'societe' => $request->societe,
+            'jour_prefere' => $request->jour_prefere,
+            'message' => $request->message,
+            'statut' => $request->statut,
+            'source' => 'test_manuel',
+            'priorite' => 'moyenne',
+        ]);
+
+        if ($request->statut === 'planifiee') {
+            $demande->update([
+                'date_rdv' => $request->date_rdv,
+                'heure_rdv' => $request->heure_rdv,
+                'duree_rdv' => $request->duree_rdv ?: 60,
+            ]);
+        }
+
+        return back()->with('success', "Demande de démo créée avec succès pour l'email : {$request->email}");
+    } catch (\Exception $e) {
+        return back()->withErrors(['error' => 'Erreur: ' . $e->getMessage()]);
+    }
+})->name('create.demo.test.post');
+
 // Route de test Livewire
 Route::get('/test-livewire', function () {
     return view('test-livewire');
 })->name('test.livewire');
 
-// Default dashboard route - redirects users according to role
+// Route de test pour vérifier que le système fonctionne
+Route::get('/test-system', function () {
+    return response()->json([
+        'status' => 'success',
+        'message' => 'Système fonctionnel',
+        'timestamp' => now(),
+        'user' => auth()->user() ? auth()->user()->email : 'non connecté'
+    ]);
+})->name('test.system');
+
+// Route dashboard simple pour éviter les boucles de redirection
 Route::get('/dashboard', function () {
     $user = auth()->user();
     
@@ -67,6 +122,7 @@ Route::get('/dashboard', function () {
         return redirect()->route('login');
     }
     
+    // Redirection directe selon le rôle
     if ($user->role === 'admin') {
         if ($user->administrateur) {
             if ($user->administrateur->type === 'manager') {
@@ -78,18 +134,67 @@ Route::get('/dashboard', function () {
         return redirect()->route('admin.dashboard');
     }
     
-    // Clients go to their profile page
+    // Clients vont directement à leur profil
     return redirect()->route('client.profile');
 })->middleware('auth:sanctum')->name('dashboard');
 
 // Authentication routes (Jetstream handles these)
 Route::get('/login', function () {
+    // Si l'utilisateur est déjà connecté, le rediriger selon son rôle
+    if (auth()->check()) {
+        $user = auth()->user();
+        
+        if ($user->role === 'admin') {
+            if ($user->administrateur) {
+                if ($user->administrateur->type === 'manager') {
+                    return redirect()->route('manager.dashboard');
+                } elseif ($user->administrateur->type === 'commercial') {
+                    return redirect()->route('commercial.dashboard');
+                }
+            }
+            return redirect()->route('admin.dashboard');
+        }
+        
+        // Clients vont à leur profil
+        return redirect()->route('client.profile');
+    }
+    
     return view('auth.login');
-})->name('login')->middleware(RedirectAccordingToRole::class);
+})->name('login');
 
 Route::get('/register', function () {
-    return view('auth.register');
-})->name('register')->middleware(RedirectAccordingToRole::class);
+    // Si l'utilisateur est déjà connecté, le rediriger selon son rôle
+    if (auth()->check()) {
+        $user = auth()->user();
+        
+        if ($user->role === 'admin') {
+            if ($user->administrateur) {
+                if ($user->administrateur->type === 'manager') {
+                    return redirect()->route('manager.dashboard');
+                } elseif ($user->administrateur->type === 'commercial') {
+                    return redirect()->route('commercial.dashboard');
+                }
+            }
+            return redirect()->route('admin.dashboard');
+        }
+        
+        // Clients vont à leur profil
+        return redirect()->route('client.profile');
+    }
+    
+    // Utiliser notre formulaire client personnalisé
+    return view('auth.client-register');
+})->name('register');
+
+// Route POST pour l'inscription (utilise le contrôleur client)
+Route::post('/register', [App\Http\Controllers\Client\RegisterController::class, 'register'])->name('register.post');
+
+// Routes de vérification d'email
+Route::get('/email/verify/{id}/{hash}', [App\Http\Controllers\EmailVerificationController::class, 'verify'])->name('verification.verify');
+Route::post('/email/verification-notification', [App\Http\Controllers\EmailVerificationController::class, 'resend'])->name('verification.send');
+Route::get('/email/verify', function () {
+    return view('auth.verify-email');
+})->name('verification.notice');
 
 // Routes d'inscription client (publiques)
 Route::prefix('client')->name('client.')->group(function () {
@@ -98,42 +203,40 @@ Route::prefix('client')->name('client.')->group(function () {
 });
 
 // Client routes (authenticated clients stay on public portal)
-Route::middleware([
+// Client specific routes
+Route::prefix('client')->name('client.')->middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
-    'verified',
+    'conditional.email.verification', // Middleware de vérification d'email conditionnelle
 ])->group(function () {
-    // Client specific routes
-    Route::prefix('client')->name('client.')->group(function () {
-        // Route principale du profil (compatible avec l'espace existant)
-        Route::get('/profile', function () {
-            return view('portal.client-profile');
-        })->name('profile');
-        
-        // Route pour voir les devis (compatible avec l'espace existant)
-        Route::get('/devis', function () {
-            return view('portal.client-devis');
-        })->name('devis');
-        
-        // Route pour voir les factures (compatible avec l'espace existant)
-        Route::get('/factures', function () {
-            return view('portal.client-factures');
-        })->name('factures');
-        
-                         // Routes avancées pour le profil client (sous un préfixe différent)
-                 Route::prefix('advanced-profile')->name('advanced-profile.')->group(function () {
-                     Route::get('/', [App\Http\Controllers\Client\ProfileController::class, 'show'])->name('show');
-                     Route::put('/update', [App\Http\Controllers\Client\ProfileController::class, 'update'])->name('update');
-                     
-                     // Routes pour les devis du client
-                     Route::prefix('devis')->name('devis.')->group(function () {
-                         Route::get('/{devis}', [App\Http\Controllers\Client\ProfileController::class, 'showDevis'])->name('show');
-                         Route::get('/{devis}/preview', [App\Http\Controllers\Client\ProfileController::class, 'previewDevis'])->name('preview');
-                         Route::get('/{devis}/download', [App\Http\Controllers\Client\ProfileController::class, 'downloadDevis'])->name('download');
-                         Route::post('/{devis}/validate', [App\Http\Controllers\Client\ProfileController::class, 'validateDevis'])->name('validate');
-                     });
-                 });
-    });
+    // Route principale du profil
+    Route::get('/profile', [App\Http\Controllers\Client\ProfileController::class, 'show'])->name('profile');
+    Route::put('/profile', [App\Http\Controllers\Client\ProfileController::class, 'update'])->name('profile.update');
+    
+    // Route pour voir les devis
+    Route::get('/devis', function () {
+        return view('portal.client-devis');
+    })->name('devis');
+    
+    // Route pour voir les factures
+    Route::get('/factures', function () {
+        return view('portal.client-factures');
+    })->name('factures');
+    
+    // Route pour la page des demandes
+    Route::get('/demandes', function () {
+        $user = auth()->user();
+        $demandesDemo = \App\Models\DemandeDemo::where('email', $user->email)->paginate(10);
+        return view('portal.client-demandes', compact('demandesDemo'));
+    })->name('demandes');
+    
+    // Routes pour les abonnements
+    Route::get('/abonnements', [App\Http\Controllers\Client\AbonnementController::class, 'index'])->name('abonnements');
+    Route::get('/abonnements/{abonnement}', [App\Http\Controllers\Client\AbonnementController::class, 'show'])->name('abonnements.show');
+    
+    // Routes pour les demandes de démo (détails)
+    Route::get('/demandes-demo', [App\Http\Controllers\Client\DemandeDemoController::class, 'index'])->name('demandes-demo.index');
+    Route::get('/demandes-demo/{demandeDemo}', [App\Http\Controllers\Client\DemandeDemoController::class, 'show'])->name('demandes-demo.show');
 });
 
 if (app()->environment('local')) {
@@ -175,7 +278,7 @@ Route::prefix('admin')->group(function () {
 });
 
 // Manager area
-Route::prefix('manager')->name('manager.')->middleware(['auth:sanctum', 'verified'])->group(function () {
+Route::prefix('manager')->name('manager.')->middleware(['auth:sanctum', 'admin.type:manager'])->group(function () {
     Route::get('/dashboard', function () {
         return view('manager.dashboard');
     })->name('dashboard');
@@ -236,8 +339,7 @@ Route::prefix('commercial')->group(function () {
     Route::middleware([
         'auth:sanctum',
         config('jetstream.auth_session'),
-        'verified',
-        'role:admin',
+        'admin.type:commercial',
     ])->group(function () {
         Route::view('/dashboard', 'commercial.dashboard')->name('commercial.dashboard');
         
@@ -261,9 +363,13 @@ Route::prefix('commercial')->group(function () {
         });
 
         // Routes pour la gestion du planning
-        Route::prefix('planning')->group(function () {
-            Route::get('/', [DemandeDemoController::class, 'planning'])->name('commercial.planning');
-            Route::post('/creer-creneau', [DemandeDemoController::class, 'creerCreneau'])->name('commercial.planning.creer');
+        Route::prefix('planning')->name('planning.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Commercial\PlanningController::class, 'index'])->name('index');
+            Route::get('/{date}', [\App\Http\Controllers\Commercial\PlanningController::class, 'showDay'])->name('show-day');
+            Route::post('/', [\App\Http\Controllers\Commercial\PlanningController::class, 'store'])->name('store');
+            Route::put('/{creneau}', [\App\Http\Controllers\Commercial\PlanningController::class, 'update'])->name('update');
+            Route::delete('/{creneau}', [\App\Http\Controllers\Commercial\PlanningController::class, 'destroy'])->name('destroy');
+            Route::post('/check-availability', [\App\Http\Controllers\Commercial\PlanningController::class, 'checkAvailability'])->name('check-availability');
         });
 
         // Routes pour la gestion des clients
@@ -345,19 +451,16 @@ Route::get('/{devis}/download-html', [\App\Http\Controllers\Commercial\DevisPdfC
         });
 
         // Routes pour la gestion des abonnements
-        Route::prefix('abonnements')->group(function () {
-            Route::get('/', function () {
-                return view('commercial.abonnements.index');
-            })->name('commercial.abonnements.index');
-            Route::get('/create', function () {
-                return view('commercial.abonnements.create');
-            })->name('commercial.abonnements.create');
-            Route::get('/{abonnement}', function ($abonnement) {
-                return view('commercial.abonnements.show', compact('abonnement'));
-            })->name('commercial.abonnements.show');
-            Route::get('/{abonnement}/edit', function ($abonnement) {
-                return view('commercial.abonnements.edit', compact('abonnement'));
-            })->name('commercial.abonnements.edit');
+        Route::prefix('abonnements')->name('abonnements.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Commercial\AbonnementController::class, 'index'])->name('index');
+            Route::get('/create', [\App\Http\Controllers\Commercial\AbonnementController::class, 'create'])->name('create');
+            Route::post('/', [\App\Http\Controllers\Commercial\AbonnementController::class, 'store'])->name('store');
+            Route::get('/{abonnement}', [\App\Http\Controllers\Commercial\AbonnementController::class, 'show'])->name('show');
+            Route::get('/{abonnement}/edit', [\App\Http\Controllers\Commercial\AbonnementController::class, 'edit'])->name('edit');
+            Route::put('/{abonnement}', [\App\Http\Controllers\Commercial\AbonnementController::class, 'update'])->name('update');
+            Route::delete('/{abonnement}', [\App\Http\Controllers\Commercial\AbonnementController::class, 'destroy'])->name('destroy');
+            Route::patch('/{abonnement}/statut', [\App\Http\Controllers\Commercial\AbonnementController::class, 'changeStatut'])->name('change-statut');
+            Route::post('/{abonnement}/renouveler', [\App\Http\Controllers\Commercial\AbonnementController::class, 'renouveler'])->name('renouveler');
         });
     });
 });

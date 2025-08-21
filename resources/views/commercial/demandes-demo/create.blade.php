@@ -25,7 +25,7 @@
                         @foreach(\App\Models\Client::orderBy('nom_entreprise')->get() as $client)
                             <option value="{{ $client->idclient }}" 
                                     {{ request('client_id') == $client->idclient ? 'selected' : '' }}>
-                                {{ $client->nom_entreprise }} - {{ $client->contact_principal }}
+                                {{ $client->nom_entreprise }}
                             </option>
                         @endforeach
                     </select>

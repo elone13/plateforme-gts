@@ -13,36 +13,15 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Styles personnalisés GTS -->
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     
-    <!-- Scripts -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#fbbf24',
-                        'primary-dark': '#f59e0b',
-                        'primary-light': '#fde047',
-                        'primary-soft': '#fef3c7',
-                        'primary-muted': '#fef9e7',
-                        secondary: '#1e40af',
-                        'secondary-dark': '#1e3a8a',
-                        'secondary-light': '#3b82f6',
-                        accent: '#059669',
-                        'accent-dark': '#047857',
-                        'accent-light': '#10b981'
-                    }
-                }
-            }
-        }
-    </script>
+    <!-- Alpine.js -->
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body class="font-sans antialiased bg-gray-50">
     <!-- Navigation -->
-    <nav class="bg-white shadow-lg border-b border-gray-200">
+    @if(!request()->routeIs('client.*'))
+    <nav class="bg-white shadow-lg border-b border-gray-200 fixed top-0 left-0 right-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <!-- Logo et navigation principale -->
@@ -74,51 +53,57 @@
                     </button>
                 </div>
 
-                <!-- Côté droit : Profil utilisateur -->
+                                <!-- Côté droit : Simple info utilisateur -->
                 <div class="flex items-center">
-                                         @auth
-                         <div class="flex items-center space-x-4">
-                             <!-- Bouton Demander une démo -->
-                             <a href="{{ route('contact') }}" class="bg-white hover:bg-primary text-primary hover:text-white border-2 border-primary px-4 py-2 rounded-md text-sm font-medium transition-all duration-200">
-                                 <i class="fas fa-rocket mr-2"></i>Demander une démo
-                             </a>
-                             
-                             <!-- Notifications -->
-                             <button class="p-2 text-gray-400 hover:text-gray-500 transition-colors duration-200">
-                                 <i class="fas fa-bell text-lg"></i>
-                             </button>
+                                        @auth
+                        <div class="flex items-center space-x-4">
+                            <!-- Bouton Demander une démo -->
+                            <a href="{{ route('contact') }}" class="bg-white hover:bg-primary text-primary hover:text-white border-2 border-primary px-4 py-2 rounded-md text-sm font-medium transition-all duration-200">
+                                <i class="fas fa-rocket mr-2"></i>Demander une démo
+                            </a>
                             
-                            <!-- Menu profil -->
-                            <div class="relative group">
-                                <button class="flex items-center space-x-2 text-gray-700 hover:text-primary transition-colors duration-200">
+                            <!-- Menu utilisateur avec dropdown -->
+                            <div class="relative" x-data="{ open: false }">
+                                <button @click="open = !open" 
+                                        @click.away="open = false"
+                                        class="flex items-center space-x-2 text-gray-700 hover:text-primary transition-colors duration-200 focus:outline-none">
                                     <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
                                         <span class="text-white text-sm font-medium">{{ substr(auth()->user()->name, 0, 1) }}</span>
                                     </div>
                                     <span class="hidden md:block text-sm font-medium">{{ auth()->user()->name }}</span>
-                                    <i class="fas fa-chevron-down text-xs"></i>
+                                    <i class="fas fa-chevron-down text-xs transition-transform duration-200" :class="open ? 'rotate-180' : ''"></i>
                                 </button>
                                 
                                 <!-- Dropdown menu -->
-                                <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                                    <a href="{{ route('client.profile') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                        <i class="fas fa-user mr-2"></i>Mon Profil
+                                <div x-show="open" 
+                                     x-transition:enter="transition ease-out duration-200"
+                                     x-transition:enter-start="transform opacity-0 scale-95"
+                                     x-transition:enter-end="transform opacity-100 scale-100"
+                                     x-transition:leave="transition ease-in duration-150"
+                                     x-transition:leave-start="transform opacity-100 scale-100"
+                                     x-transition:leave-end="transform opacity-0 scale-95"
+                                     class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
+                                    
+                                    <!-- Profil -->
+                                    <a href="{{ route('client.profile') }}" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-200">
+                                        <i class="fas fa-user mr-3 text-gray-400"></i>
+                                        Mon Profil
                                     </a>
-                                    <a href="{{ route('client.devis') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                        <i class="fas fa-file-invoice mr-2"></i>Mes Devis
-                                    </a>
-                                    <a href="{{ route('client.factures') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                        <i class="fas fa-receipt mr-2"></i>Mes Factures
-                                    </a>
-                                    <hr class="my-1">
+                                    
+                                    <!-- Séparateur -->
+                                    <div class="border-t border-gray-200 my-1"></div>
+                                    
+                                    <!-- Déconnexion -->
                                     <form method="POST" action="{{ route('logout') }}">
                                         @csrf
-                                        <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                            <i class="fas fa-sign-out-alt mr-2"></i>Déconnexion
+                                        <button type="submit" class="w-full flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-200">
+                                            <i class="fas fa-sign-out-alt mr-3 text-gray-400"></i>
+                                            Déconnexion
                                         </button>
                                     </form>
                                 </div>
                             </div>
-                        </div>
+                       </div>
                                          @else
                          <div class="flex items-center space-x-4">
                              <!-- Bouton Demander une démo -->
@@ -138,8 +123,10 @@
             </div>
         </div>
     </nav>
+    @endif
 
     <!-- Menu mobile -->
+    @if(!request()->routeIs('client.*'))
     <div id="mobileMenu" class="hidden md:hidden bg-white border-b border-gray-200">
         <div class="px-2 pt-2 pb-3 space-y-1">
             <a href="{{ route('home') }}" class="block px-3 py-2 text-base font-medium text-gray-900 hover:text-primary hover:bg-gray-50 rounded-md">
@@ -151,74 +138,40 @@
             <a href="{{ route('contact') }}" class="block px-3 py-2 text-base font-medium text-gray-900 hover:text-primary hover:bg-gray-50 rounded-md">
                 Contact
             </a>
-                         <a href="{{ route('contact') }}" class="block px-3 py-2 text-base font-medium bg-white text-primary hover:bg-primary hover:text-white border-2 border-primary rounded-md">
-                 <i class="fas fa-rocket mr-2"></i>Demander une démo
-             </a>
+            <a href="{{ route('contact') }}" class="block px-3 py-2 text-base font-medium bg-white text-primary hover:bg-primary hover:text-white border-2 border-primary rounded-md">
+                <i class="fas fa-rocket mr-2"></i>Demander une démo
+            </a>
+            
+            @auth
+            <!-- Séparateur pour utilisateur connecté -->
+            <div class="border-t border-gray-200 my-2"></div>
+            
+            <!-- Profil utilisateur -->
+            <a href="{{ route('client.profile') }}" class="block px-3 py-2 text-base font-medium text-gray-900 hover:text-primary hover:bg-gray-50 rounded-md">
+                <i class="fas fa-user mr-2"></i>Mon Profil
+            </a>
+            
+            <!-- Déconnexion -->
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="w-full text-left block px-3 py-2 text-base font-medium text-gray-900 hover:text-primary hover:bg-gray-50 rounded-md">
+                    <i class="fas fa-sign-out-alt mr-2"></i>Déconnexion
+                </button>
+            </form>
+            @endauth
         </div>
     </div>
+    @endif
 
     <!-- Contenu principal -->
-    <main>
+    <main class="pt-16">
         @yield('content')
     </main>
 
     <!-- Footer -->
     <footer class="bg-gray-900 text-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <!-- Logo et description -->
-                <div class="col-span-1 md:col-span-2">
-                    <div class="flex items-center mb-4">
-                        <img class="h-10 w-auto" src="{{ asset('images/logo.png') }}" alt="GTS Afrique">
-                    </div>
-                    <p class="text-gray-300 mb-4">
-                        Solutions de géolocalisation et de gestion de flotte pour entreprises en Afrique de l'Ouest.
-                    </p>
-                    <div class="flex space-x-4">
-                        <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">
-                            <i class="fab fa-facebook text-xl"></i>
-                        </a>
-                        <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">
-                            <i class="fab fa-twitter text-xl"></i>
-                        </a>
-                        <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">
-                            <i class="fab fa-linkedin text-xl"></i>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Services -->
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">Nos Services</h3>
-                    <ul class="space-y-2 text-gray-300">
-                        <li><a href="#" class="hover:text-white transition-colors duration-200">Géolocalisation GPS</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors duration-200">Gestion de flotte</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors duration-200">Suivi en temps réel</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors duration-200">Rapports et analyses</a></li>
-                    </ul>
-                </div>
-
-                <!-- Contact -->
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">Contact</h3>
-                    <ul class="space-y-2 text-gray-300">
-                        <li class="flex items-center">
-                            <i class="fas fa-map-marker-alt mr-2 text-primary"></i>
-                            Dakar, Sénégal
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-phone mr-2 text-primary"></i>
-                            +221 XX XXX XX XX
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-envelope mr-2 text-primary"></i>
-                            contact@gts-afrique.com
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="text-center text-gray-400">
                 <p>&copy; {{ date('Y') }} GTS Afrique. Tous droits réservés.</p>
             </div>
         </div>
@@ -227,6 +180,7 @@
     @stack('modals')
 
     <!-- JavaScript pour le menu mobile -->
+    @if(!request()->routeIs('client.*'))
     <script>
         function toggleMobileMenu() {
             const mobileMenu = document.getElementById('mobileMenu');
@@ -243,5 +197,6 @@
             });
         });
     </script>
+    @endif
 </body>
 </html>

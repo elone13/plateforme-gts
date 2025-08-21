@@ -8,6 +8,8 @@ use App\Http\Livewire\ItemManager;
 use App\Livewire\Commercial\CreateDevisModal;
 use App\Livewire\Commercial\DevisList;
 use App\Livewire\Commercial\DevisActions;
+use App\Http\Livewire\Commercial\PlanningManager;
+use App\Http\Livewire\Commercial\CreneauList;
 
 class LivewireServiceProvider extends ServiceProvider
 {
@@ -28,5 +30,7 @@ class LivewireServiceProvider extends ServiceProvider
         Livewire::component('commercial.create-devis-modal', CreateDevisModal::class);
         Livewire::component('commercial.devis-list', DevisList::class);
         Livewire::component('commercial.devis-actions', DevisActions::class);
+        Livewire::component('planning-manager', PlanningManager::class);
+        Livewire::component('creneau-list', CreneauList::class);
     }
 }

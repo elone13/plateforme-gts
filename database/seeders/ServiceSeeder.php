@@ -19,6 +19,7 @@ class ServiceSeeder extends Seeder
             'nom' => 'Balises GPS Haute Précision',
             'description' => 'Système de géolocalisation en temps réel avec une précision de ±3 mètres. Balises résistantes IP67, autonomie jusqu\'à 5 ans, parfaites pour le suivi de flotte et la sécurité des véhicules.',
             'image' => null,
+            'prix' => 25000,
         ]);
 
         // Items pour le service Balises GPS
@@ -45,6 +46,7 @@ class ServiceSeeder extends Seeder
             'nom' => 'Système Antidémarrage Intelligent',
             'description' => 'Contrôle à distance de vos véhicules avec blocage instantané. Sécurisez votre flotte depuis votre smartphone avec notre solution d\'antidémarrage avancée.',
             'image' => null,
+            'prix' => 18000,
         ]);
 
         // Items pour le service Antidémarrage
@@ -71,6 +73,7 @@ class ServiceSeeder extends Seeder
             'nom' => 'Solution Éco-conduite',
             'description' => 'Optimisez la consommation de carburant de votre flotte avec notre système de lecture CAN bus. Réduisez vos coûts de 15-20% et formez vos conducteurs.',
             'image' => null,
+            'prix' => 22000,
         ]);
 
         // Items pour le service Éco-conduite
@@ -97,6 +100,7 @@ class ServiceSeeder extends Seeder
             'nom' => 'Gestion Intelligente du Carburant',
             'description' => 'Surveillez et optimisez la consommation de carburant de votre flotte. Détection des anomalies, prévention des vols et rapports détaillés pour une gestion optimale.',
             'image' => null,
+            'prix' => 30000,
         ]);
 
         // Items pour le service Gestion Carburant

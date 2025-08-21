@@ -1,246 +1,228 @@
 @extends('layouts.commercial')
-
-@section('page-title', 'Gestion des abonnements')
-@section('page-description', 'Suivre et gérer tous les abonnements de vos clients')
+@section('title', 'Gestion des Abonnements - GTS Afrique')
 
 @section('content')
-<div class="py-6">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Header avec actions -->
-        <div class="mb-6 flex items-center justify-between">
+<div class="container mx-auto px-4 py-8">
+    <!-- En-tête de la page -->
+    <div class="mb-8">
+        <div class="flex items-center justify-between">
             <div>
-                <h2 class="text-2xl font-bold text-gray-900">Gestion des abonnements</h2>
-                <p class="mt-1 text-sm text-gray-500">Suivez et gérez tous vos abonnements</p>
+                <h1 class="text-3xl font-bold text-gray-900">Gestion des Abonnements</h1>
+                <p class="text-lg text-gray-600">Suivi et gestion des abonnements clients</p>
             </div>
             <div class="flex space-x-3">
-                <button class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
-                    <i class="fas fa-filter mr-2"></i>
-                    Filtrer
-                </button>
-                <a href="{{ route('commercial.abonnements.create') }}" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                <a href="{{ route('abonnements.create') }}" 
+                   class="btn-gts-primary inline-flex items-center px-6 py-3 rounded-xl">
                     <i class="fas fa-plus mr-2"></i>
-                    Nouvel abonnement
+                    Nouvel Abonnement
                 </a>
             </div>
         </div>
+    </div>
 
-        <!-- Statistiques -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-            <div class="bg-white overflow-hidden shadow rounded-lg">
-                <div class="p-5">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0">
-                            <div class="w-8 h-8 bg-blue-500 rounded-md flex items-center justify-center">
-                                <i class="fas fa-calendar-check text-white"></i>
-                            </div>
-                        </div>
-                        <div class="ml-5 w-0 flex-1">
-                            <dl>
-                                <dt class="text-sm font-medium text-gray-500 truncate">Total abonnements</dt>
-                                <dd class="text-lg font-medium text-gray-900">{{ \App\Models\Abonnement::count() }}</dd>
-                            </dl>
-                        </div>
-                    </div>
+    <!-- Statistiques -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <!-- Total -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <div class="flex items-center">
+                <div class="p-3 bg-blue-100 rounded-xl">
+                    <i class="fas fa-list text-blue-600 text-xl"></i>
                 </div>
-            </div>
-
-            <div class="bg-white overflow-hidden shadow rounded-lg">
-                <div class="p-5">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0">
-                            <div class="w-8 h-8 bg-green-500 rounded-md flex items-center justify-center">
-                                <i class="fas fa-check text-white"></i>
-                            </div>
-                        </div>
-                        <div class="ml-5 w-0 flex-1">
-                            <dl>
-                                <dt class="text-sm font-medium text-gray-500 truncate">Actifs</dt>
-                                <dd class="text-lg font-medium text-gray-900">{{ \App\Models\Abonnement::where('statut', 'actif')->count() }}</dd>
-                            </dl>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-white overflow-hidden shadow rounded-lg">
-                <div class="p-5">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0">
-                            <div class="w-8 h-8 bg-yellow-500 rounded-md flex items-center justify-center">
-                                <i class="fas fa-exclamation-triangle text-white"></i>
-                            </div>
-                        </div>
-                        <div class="ml-5 w-0 flex-1">
-                            <dl>
-                                <dt class="text-sm font-medium text-gray-500 truncate">Expirant bientôt</dt>
-                                <dd class="text-lg font-medium text-gray-900">
-                                    {{ \App\Models\Abonnement::where('statut', 'actif')
-                                        ->where('date_fin', '<=', \Carbon\Carbon::now()->addDays(30))
-                                        ->where('date_fin', '>', \Carbon\Carbon::now())
-                                        ->count() }}
-                                </dd>
-                            </dl>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-white overflow-hidden shadow rounded-lg">
-                <div class="p-5">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0">
-                            <div class="w-8 h-8 bg-purple-500 rounded-md flex items-center justify-center">
-                                <i class="fas fa-euro-sign text-white"></i>
-                            </div>
-                        </div>
-                        <div class="ml-5 w-0 flex-1">
-                            <dl>
-                                <dt class="text-sm font-medium text-gray-500 truncate">CA mensuel</dt>
-                                <dd class="text-lg font-medium text-gray-900">
-                                    {{ number_format(\App\Models\Abonnement::where('statut', 'actif')->sum('prix_mensuel'), 2) }}€
-                                </dd>
-                            </dl>
-                        </div>
-                    </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-500">Total</p>
+                    <p class="text-2xl lg:text-3xl font-bold text-gray-900">{{ $stats['total'] }}</p>
                 </div>
             </div>
         </div>
 
-        <!-- Table des abonnements -->
-        <div class="bg-white shadow overflow-hidden sm:rounded-md">
-            <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
-                <h3 class="text-lg leading-6 font-medium text-gray-900">Liste des abonnements</h3>
-            </div>
-            
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Client
-                            </th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Service
-                            </th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Date début
-                            </th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Date fin
-                            </th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Prix mensuel
-                            </th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Statut
-                            </th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Renouvellement
-                            </th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Actions
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        @forelse(\App\Models\Abonnement::with(['client', 'service'])->latest()->get() as $abonnement)
-                        <tr class="hover:bg-gray-50">
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="flex items-center">
-                                    <div class="flex-shrink-0 h-8 w-8">
-                                        <div class="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center">
-                                            <span class="text-xs font-medium text-primary">
-                                                {{ strtoupper(substr($abonnement->client->nom ?? 'N/A', 0, 2)) }}
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="ml-3">
-                                        <div class="text-sm font-medium text-gray-900">
-                                            {{ $abonnement->client->nom ?? 'N/A' }}
-                                        </div>
-                                        <div class="text-sm text-gray-500">
-                                            {{ $abonnement->client->email ?? 'N/A' }}
-                                        </div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">{{ $abonnement->service->nom ?? 'N/A' }}</div>
-                                <div class="text-sm text-gray-500">{{ Str::limit($abonnement->service->description ?? '', 50) }}</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                {{ $abonnement->date_debut ? \Carbon\Carbon::parse($abonnement->date_debut)->format('d/m/Y') : 'N/A' }}
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                @if($abonnement->date_fin)
-                                    @php
-                                        $dateFin = \Carbon\Carbon::parse($abonnement->date_fin);
-                                        $now = \Carbon\Carbon::now();
-                                        $isExpiringSoon = $dateFin->diffInDays($now) <= 30 && $abonnement->statut === 'actif';
-                                        $isExpired = $dateFin->isPast() && $abonnement->statut === 'actif';
-                                    @endphp
-                                    <span class="{{ $isExpired ? 'text-red-600 font-medium' : ($isExpiringSoon ? 'text-yellow-600 font-medium' : '') }}">
-                                        {{ $dateFin->format('d/m/Y') }}
-                                    </span>
-                                @else
-                                    N/A
-                                @endif
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                {{ number_format($abonnement->prix_mensuel ?? 0, 2) }}€
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full 
-                                    @if($abonnement->statut === 'actif') bg-green-100 text-green-800
-                                    @elseif($abonnement->statut === 'suspendu') bg-yellow-100 text-yellow-800
-                                    @elseif($abonnement->statut === 'expire') bg-red-100 text-red-800
-                                    @elseif($abonnement->statut === 'annule') bg-gray-100 text-gray-800
-                                    @else bg-gray-100 text-gray-800
-                                    @endif">
-                                    {{ ucfirst($abonnement->statut ?? 'N/A') }}
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                @if($abonnement->renouvellement_automatique)
-                                    <span class="text-green-600">
-                                        <i class="fas fa-check mr-1"></i>Auto
-                                    </span>
-                                @else
-                                    <span class="text-gray-500">
-                                        <i class="fas fa-times mr-1"></i>Manuel
-                                    </span>
-                                @endif
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <div class="flex items-center justify-end space-x-2">
-                                    <a href="{{ route('commercial.abonnements.show', $abonnement) }}" 
-                                       class="text-primary hover:text-primary-dark">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a href="{{ route('commercial.abonnements.edit', $abonnement) }}" 
-                                       class="text-blue-600 hover:text-blue-900">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <button class="text-green-600 hover:text-green-900">
-                                        <i class="fas fa-sync-alt"></i>
-                                    </button>
-                                    <button class="text-red-600 hover:text-red-900">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="8" class="px-6 py-4 text-center text-gray-500">
-                                Aucun abonnement trouvé.
-                            </td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+        <!-- Actifs -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <div class="flex items-center">
+                <div class="p-3 bg-green-100 rounded-xl">
+                    <i class="fas fa-check text-green-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-500">Actifs</p>
+                    <p class="text-2xl lg:text-3xl font-bold text-gray-900">{{ $stats['actifs'] }}</p>
+                </div>
             </div>
         </div>
+
+        <!-- Expirés -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <div class="flex items-center">
+                <div class="p-3 bg-red-100 rounded-xl">
+                    <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-500">Expirés</p>
+                    <p class="text-2xl lg:text-3xl font-bold text-gray-900">{{ $stats['expires'] }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- À renouveler -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <div class="flex items-center">
+                <div class="p-3 bg-yellow-100 rounded-xl">
+                    <i class="fas fa-clock text-yellow-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-500">À renouveler</p>
+                    <p class="text-2xl lg:text-3xl font-bold text-gray-900">{{ $stats['a_renouveler'] }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtres et recherche -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8">
+        <div class="flex flex-col md:flex-row gap-4">
+            <div class="flex-1">
+                <input type="text" 
+                       placeholder="Rechercher par client, service..." 
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gts-primary focus:border-transparent">
+            </div>
+            <div class="flex gap-3">
+                <select class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gts-primary focus:border-transparent">
+                    <option value="">Tous les statuts</option>
+                    <option value="actif">Actif</option>
+                    <option value="suspendu">Suspendu</option>
+                    <option value="résilié">Résilié</option>
+                    <option value="expiré">Expiré</option>
+                </select>
+                <button class="btn-gts-primary px-6 py-2 rounded-lg">
+                    <i class="fas fa-search mr-2"></i>
+                    Filtrer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Liste des abonnements -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="px-6 lg:px-8 py-6 border-b border-gray-200">
+            <h3 class="text-xl font-semibold text-gray-900">Tous les abonnements</h3>
+        </div>
+        
+        <div class="overflow-x-auto">
+            <table class="w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Client
+                        </th>
+                        <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
+                            Service
+                        </th>
+                        <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Statut
+                        </th>
+                        <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
+                            Prix
+                        </th>
+                        <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden xl:table-cell">
+                            Dates
+                        </th>
+                        <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Actions
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    @forelse($abonnements as $abonnement)
+                    <tr class="hover:bg-gray-50 transition-colors duration-200">
+                        <td class="px-3 lg:px-6 py-4">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-8 w-8 lg:h-10 lg:w-10">
+                                    <div class="h-8 w-8 lg:h-10 lg:w-10 rounded-full bg-gts-primary flex items-center justify-center">
+                                        <span class="text-xs lg:text-sm font-medium text-gray-900">
+                                            {{ strtoupper(substr($abonnement->client->nom, 0, 2)) }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="ml-3 lg:ml-4 min-w-0 flex-1">
+                                    <div class="text-sm font-medium text-gray-900 truncate">{{ $abonnement->client->nom }}</div>
+                                    <div class="text-xs lg:text-sm text-gray-500 truncate">{{ $abonnement->client->email }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-3 lg:px-6 py-4 hidden lg:table-cell">
+                            <div class="text-sm text-gray-900 truncate">{{ $abonnement->service->nom }}</div>
+                            <div class="text-xs text-gray-500 truncate max-w-xs">{{ $abonnement->service->description }}</div>
+                        </td>
+                        <td class="px-3 lg:px-6 py-4">
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full
+                                @if($abonnement->statut === 'actif') bg-green-100 text-green-800
+                                @elseif($abonnement->statut === 'suspendu') bg-yellow-100 text-yellow-800
+                                @elseif($abonnement->statut === 'résilié') bg-red-100 text-red-800
+                                @elseif($abonnement->statut === 'expiré') bg-gray-100 text-gray-800
+                                @else bg-blue-100 text-blue-800 @endif">
+                                {{ ucfirst($abonnement->statut) }}
+                            </span>
+                        </td>
+                                                        <td class="px-3 lg:px-6 py-4 hidden md:table-cell">
+                                    <div class="text-sm text-gray-900">{{ number_format($abonnement->prix_mensuel, 0) }} FCFA/mois</div>
+                                    <div class="text-xs text-gray-500">{{ number_format($abonnement->prix_total, 0) }} FCFA total</div>
+                                </td>
+                        <td class="px-3 lg:px-6 py-4 hidden xl:table-cell text-sm text-gray-500">
+                            <div class="text-xs">Début: {{ $abonnement->date_debut->format('d/m/Y') }}</div>
+                            <div class="text-xs">Fin: {{ $abonnement->date_debut->addMonths($abonnement->duree_mois)->format('d/m/Y') }}</div>
+                        </td>
+                        <td class="px-3 lg:px-6 py-4">
+                            <div class="flex items-center space-x-2">
+                                <a href="{{ route('abonnements.show', $abonnement) }}" 
+                                   class="text-indigo-600 hover:text-indigo-900 transition-colors duration-200 p-1"
+                                   title="Voir">
+                                    <i class="fas fa-eye text-sm"></i>
+                                </a>
+                                <a href="{{ route('abonnements.edit', $abonnement) }}" 
+                                   class="text-blue-600 hover:text-blue-900 transition-colors duration-200 p-1"
+                                   title="Modifier">
+                                    <i class="fas fa-edit text-sm"></i>
+                                </a>
+                                @if($abonnement->statut === 'actif')
+                                <form action="{{ route('abonnements.renouveler', $abonnement) }}" method="POST" class="inline">
+                                    @csrf
+                                    <button type="submit" class="text-green-600 hover:text-green-900 transition-colors duration-200 p-1"
+                                            title="Renouveler">
+                                        <i class="fas fa-sync-alt text-sm"></i>
+                                    </button>
+                                </form>
+                                @endif
+                                <form action="{{ route('abonnements.destroy', $abonnement) }}" method="POST" class="inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-red-600 hover:text-red-900 transition-colors duration-200 p-1"
+                                            onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet abonnement ?')"
+                                            title="Supprimer">
+                                        <i class="fas fa-trash text-sm"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="6" class="px-6 py-12 text-center">
+                            <div class="text-gray-500">
+                                <i class="fas fa-inbox text-4xl mb-4"></i>
+                                <p class="text-lg">Aucun abonnement trouvé</p>
+                                <p class="text-sm">Commencez par créer votre premier abonnement</p>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        @if($abonnements->hasPages())
+        <div class="px-6 lg:px-8 py-6 border-t border-gray-200">
+            {{ $abonnements->links() }}
+        </div>
+        @endif
     </div>
 </div>
 @endsection

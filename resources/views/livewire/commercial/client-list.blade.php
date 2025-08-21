@@ -83,7 +83,7 @@
                                 <div class="flex-shrink-0 h-10 w-10">
                                     <div class="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center">
                                         <span class="text-sm font-medium text-primary">
-                                            {{ strtoupper(substr($client->nom ?? $client->nom_entreprise ?? $client->contact_principal, 0, 2)) }}
+                                            {{ strtoupper(substr($client->nom ?? $client->nom_entreprise, 0, 2)) }}
                                         </span>
                                     </div>
                                 </div>
@@ -97,7 +97,7 @@
                             </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-900">{{ $client->contact_principal }}</div>
+                            <div class="text-sm text-gray-900">{{ $client->nom }}</div>
                             <div class="text-sm text-gray-500">{{ $client->email }}</div>
                             @if($client->telephone)
                                 <div class="text-sm text-gray-500">{{ $client->telephone }}</div>

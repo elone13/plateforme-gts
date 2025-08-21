@@ -7,15 +7,22 @@ use App\Models\Administrateur;
 use App\Models\Client;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 class TestUsersSeeder extends Seeder
 {
     public function run(): void
     {
+        // Disable foreign key checks
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+
         // Clear existing users
         User::truncate();
         Administrateur::truncate();
         Client::truncate();
+
+        // Re-enable foreign key checks
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         // Create Manager
         $manager = User::create([

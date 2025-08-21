@@ -16,7 +16,6 @@ class TestClientNomSeeder extends Seeder
         Client::create([
             'nom' => 'Jean Dupont',
             'nom_entreprise' => 'Entreprise Test SARL',
-            'contact_principal' => 'Jean Dupont',
             'email' => 'jean.dupont@test.com',
             'telephone' => '+221 77 123 45 67',
             'adresse' => '123 Rue Test, Dakar, Sénégal',
@@ -31,7 +30,6 @@ class TestClientNomSeeder extends Seeder
         Client::create([
             'nom' => 'Marie Martin',
             'nom_entreprise' => null,
-            'contact_principal' => 'Marie Martin',
             'email' => 'marie.martin@test.com',
             'telephone' => '+221 76 987 65 43',
             'adresse' => '456 Avenue Test, Dakar, Sénégal',

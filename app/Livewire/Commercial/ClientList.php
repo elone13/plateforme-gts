@@ -54,7 +54,7 @@ class ClientList extends Component
             $query->where(function($q) {
                 $q->where('nom', 'like', '%' . $this->recherche . '%')
                   ->orWhere('nom_entreprise', 'like', '%' . $this->recherche . '%')
-                  ->orWhere('contact_principal', 'like', '%' . $this->recherche . '%')
+  
                   ->orWhere('email', 'like', '%' . $this->recherche . '%')
                   ->orWhere('secteur_activite', 'like', '%' . $this->recherche . '%');
             });

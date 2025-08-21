@@ -4,8 +4,14 @@ namespace App\Http\Controllers\Commercial;
 
 use App\Http\Controllers\Controller;
 use App\Models\Client;
+use App\Models\User;
+use App\Mail\ClientAccountCreated;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 class ClientController extends Controller
 {
@@ -37,8 +43,7 @@ class ClientController extends Controller
         $validator = Validator::make($request->all(), [
             'nom' => 'required|string|max:255',
             'nom_entreprise' => 'nullable|string|max:255',
-            'contact_principal' => 'required|string|max:255',
-            'email' => 'required|email|unique:clients,email',
+            'email' => 'required|email|unique:clients,email|unique:users,email',
             'telephone' => 'nullable|string|max:20',
             'adresse' => 'nullable|string|max:500',
             'secteur_activite' => 'nullable|string|max:255',
@@ -52,24 +57,57 @@ class ClientController extends Controller
             ], 422);
         }
 
-        $client = Client::create([
-            'nom' => $request->nom,
-            'nom_entreprise' => $request->nom_entreprise,
-            'contact_principal' => $request->contact_principal,
-            'email' => $request->email,
-            'telephone' => $request->telephone,
-            'adresse' => $request->adresse,
-            'secteur_activite' => $request->secteur_activite,
-            'notes' => $request->notes,
-            'statut' => 'prospect', // Par défaut, nouveau client = prospect
-            'derniere_interaction' => now(),
-        ]);
+        try {
+            DB::beginTransaction();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Client créé avec succès',
-            'client' => $client
-        ]);
+            // Créer le client
+            $client = Client::create([
+                'nom' => $request->nom,
+                'nom_entreprise' => $request->nom_entreprise,
+                'email' => $request->email,
+                'telephone' => $request->telephone,
+                'adresse' => $request->adresse,
+                'secteur_activite' => $request->secteur_activite,
+                'notes' => $request->notes,
+                'statut' => 'prospect',
+                'derniere_interaction' => now(),
+            ]);
+
+            // Générer un mot de passe par défaut
+            $defaultPassword = 'GTS' . Str::random(6);
+
+            // Créer le compte utilisateur
+            $user = User::create([
+                'name' => $request->nom,
+                'email' => $request->email,
+                'password' => Hash::make($defaultPassword),
+                'role' => 'client',
+                'email_verified_at' => now(), // Marquer l'email comme vérifié
+                'created_by_commercial' => true, // Marquer comme créé par un commercial
+            ]);
+
+            // Lier le client à l'utilisateur
+            $client->update(['user_id' => $user->id]);
+
+            // Envoyer l'email avec les identifiants
+            Mail::to($user->email)->send(new ClientAccountCreated($user, $defaultPassword));
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Client créé avec succès. Un email avec les identifiants de connexion a été envoyé.',
+                'client' => $client
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la création du client : ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     public function edit(Client $client)
@@ -82,7 +120,6 @@ class ClientController extends Controller
         $validator = Validator::make($request->all(), [
             'nom' => 'required|string|max:255',
             'nom_entreprise' => 'nullable|string|max:255',
-            'contact_principal' => 'required|string|max:255',
             'email' => 'required|email|unique:clients,email,' . $client->id,
             'telephone' => 'nullable|string|max:20',
             'adresse' => 'nullable|string|max:500',
@@ -98,7 +135,6 @@ class ClientController extends Controller
         $client->update([
             'nom' => $request->nom,
             'nom_entreprise' => $request->nom_entreprise,
-            'contact_principal' => $request->contact_principal,
             'email' => $request->email,
             'telephone' => $request->telephone,
             'adresse' => $request->adresse,

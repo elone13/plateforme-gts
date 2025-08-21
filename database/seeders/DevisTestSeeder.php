@@ -25,7 +25,7 @@ class DevisTestSeeder extends Seeder
         $client = new Client();
         $client->idclient = 9999; // ID fixe pour le test
         $client->nom_entreprise = 'Entreprise de Test';
-        $client->contact_principal = 'Jean Dupont';
+
         $client->email = 'client@test.com';
         $client->telephone = '0123456789';
         $client->adresse = '123 Rue de Test, 75000 Paris, France';

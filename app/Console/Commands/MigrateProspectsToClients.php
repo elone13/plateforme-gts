@@ -48,7 +48,7 @@ class MigrateProspectsToClients extends Command
         $tableData = [];
         foreach ($prospectsReady as $prospect) {
             $firstPayment = $prospect->getFirstValidatedPayment();
-            $nom = $prospect->nom_entreprise ? $prospect->nom_entreprise : $prospect->contact_principal;
+            $nom = $prospect->nom_entreprise ? $prospect->nom_entreprise : $prospect->nom;
             $tableData[] = [
                 $nom,
                 $prospect->email,
@@ -86,7 +86,7 @@ class MigrateProspectsToClients extends Command
                 // Vérifier si le statut a changé
                 if ($prospect->statut !== $oldStatus) {
                     $migratedCount++;
-                    $nom = $prospect->nom_entreprise ? $prospect->nom_entreprise : $prospect->contact_principal;
+                    $nom = $prospect->nom_entreprise ? $prospect->nom_entreprise : $prospect->nom;
                     $this->line("✅ {$nom} : {$oldStatus} → {$prospect->statut}");
                     
                     // Log de la migration
@@ -99,7 +99,7 @@ class MigrateProspectsToClients extends Command
                     ]);
                 }
             } catch (\Exception $e) {
-                $nom = $prospect->nom_entreprise ? $prospect->nom_entreprise : $prospect->contact_principal;
+                $nom = $prospect->nom_entreprise ? $prospect->nom_entreprise : $prospect->nom;
                 $errors[] = [
                     'client' => $nom,
                     'error' => $e->getMessage()

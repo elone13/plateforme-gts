@@ -52,14 +52,7 @@
                             @enderror
                         </div>
                         
-                        <div>
-                            <label for="contact_principal" class="block text-sm font-medium text-gray-700">Contact principal *</label>
-                            <input type="text" id="contact_principal" name="contact_principal" value="{{ old('contact_principal', $client->contact_principal) }}" required
-                                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary @error('contact_principal') border-red-500 @enderror">
-                            @error('contact_principal')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
+
                         
                         <div>
                             <label for="email" class="block text-sm font-medium text-gray-700">Email *</label>

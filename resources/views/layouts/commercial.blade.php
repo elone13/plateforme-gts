@@ -14,150 +14,8 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#fcd61b',
-                        'primary-dark': '#e6c200',
-                        'primary-light': '#fde047',
-                        secondary: '#1e40af',
-                        'secondary-dark': '#1e3a8a',
-                        'secondary-light': '#3b82f6',
-                        accent: '#059669',
-                        'accent-dark': '#047857',
-                        'accent-light': '#10b981'
-                    }
-                }
-            }
-        }
-    </script>
-
-    <!-- Custom CSS -->
-    <style>
-        :root {
-            --primary-color: #fcd61b;
-            --primary-dark: #e6c200;
-            --secondary-color: #1e40af;
-            --accent-color: #059669;
-        }
-        
-        .sidebar-link {
-            display: flex;
-            align-items: center;
-            padding: 12px 16px;
-            color: #374151;
-            background-color: transparent;
-            border-radius: 8px;
-            font-weight: 500;
-            text-decoration: none;
-            transition: all 0.2s ease;
-            margin-bottom: 4px;
-        }
-        
-        .sidebar-link:hover {
-            background-color: #f3f4f6;
-            color: #111827;
-            transform: translateX(4px);
-        }
-        
-        .sidebar-link.active {
-            background-color: var(--primary-color);
-            color: white;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            transform: translateX(8px);
-        }
-        
-        .sidebar-link.active:hover {
-            background-color: var(--primary-dark);
-        }
-        
-        .sidebar-link i {
-            width: 20px;
-            height: 20px;
-            margin-right: 12px;
-            font-size: 18px;
-        }
-        
-        .sidebar-link span {
-            font-size: 14px;
-        }
-        
-        .stat-card {
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            padding: 24px;
-            border: 1px solid #e5e7eb;
-        }
-        
-        .btn-primary {
-            background-color: var(--primary-color);
-            color: white;
-            font-weight: 500;
-            padding: 8px 16px;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.2s ease;
-        }
-        
-        .btn-primary:hover {
-            background-color: var(--primary-dark);
-        }
-        
-        .btn-secondary {
-            background-color: var(--secondary-color);
-            color: white;
-            font-weight: 500;
-            padding: 8px 16px;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.2s ease;
-        }
-        
-        .btn-secondary:hover {
-            background-color: #1d4ed8;
-        }
-        
-        /* Amélioration de la sidebar */
-        .sidebar-nav {
-            margin-top: 24px;
-            padding: 0 12px;
-        }
-        
-        .sidebar-nav .space-y-3 > * + * {
-            margin-top: 12px;
-        }
-        
-        .sidebar-logout {
-            margin-top: 32px;
-            padding-top: 24px;
-            border-top: 1px solid #e5e7eb;
-        }
-        
-        .sidebar-logout button {
-            width: 100%;
-            text-align: left;
-            color: #dc2626;
-            background-color: transparent;
-            border: none;
-            cursor: pointer;
-            padding: 12px 16px;
-            border-radius: 8px;
-            font-weight: 500;
-            transition: all 0.2s ease;
-        }
-        
-        .sidebar-logout button:hover {
-            background-color: #fef2f2;
-            color: #b91c1c;
-        }
-    </style>
+    <!-- Scripts -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="font-sans antialiased bg-gray-50">
     <div class="min-h-screen flex">
@@ -201,7 +59,7 @@
                     <a href="{{ route('commercial.clients.index') }}" 
                        class="sidebar-link {{ request()->routeIs('commercial.clients.*') ? 'active' : '' }}">
                         <i class="fas fa-users"></i>
-                        <span>Gestion Clients</span>
+                        <span>Clients</span>
                     </a>
 
                     <a href="{{ route('commercial.devis.index') }}" 
@@ -216,24 +74,24 @@
                         <span>Factures</span>
                     </a>
 
-                    <a href="{{ route('commercial.abonnements.index') }}" 
-                       class="sidebar-link {{ request()->routeIs('commercial.abonnements.*') ? 'active' : '' }}">
+                    <a href="{{ route('abonnements.index') }}" 
+                       class="sidebar-link {{ request()->routeIs('abonnements.*') ? 'active' : '' }}">
                         <i class="fas fa-credit-card"></i>
                         <span>Abonnements</span>
                     </a>
 
-                    <a href="{{ route('commercial.planning') }}" 
-                       class="sidebar-link {{ request()->routeIs('commercial.planning.*') ? 'active' : '' }}">
+                    <a href="{{ route('planning.index') }}" 
+                       class="sidebar-link {{ request()->routeIs('planning.*') ? 'active' : '' }}">
                         <i class="fas fa-calendar-alt"></i>
                         <span>Planning</span>
                     </a>
                 </div>
 
-                <!-- Logout Section -->
+                <!-- Logout -->
                 <div class="sidebar-logout">
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button type="submit" class="sidebar-link">
+                        <button type="submit" class="w-full text-left">
                             <i class="fas fa-sign-out-alt"></i>
                             <span>Déconnexion</span>
                         </button>
@@ -243,68 +101,52 @@
         </div>
 
         <!-- Main Content -->
-        <div class="flex-1 lg:ml-64">
-            <!-- Top Header -->
-            <header class="bg-white shadow-sm border-b border-primary">
+        <div class="flex-1 flex flex-col lg:ml-64">
+            <!-- Top Navigation -->
+            <header class="bg-white shadow-sm border-b border-gray-200">
                 <div class="flex items-center justify-between px-6 py-4">
-                    <!-- Left side -->
                     <div class="flex items-center">
-                        <button @click="sidebarOpen = true" class="lg:hidden text-gray-500 hover:text-primary mr-4">
+                        <button @click="sidebarOpen = true" class="lg:hidden text-gray-500 hover:text-gray-700 mr-4">
                             <i class="fas fa-bars"></i>
                         </button>
-                        <div>
-                            <h1 class="text-2xl font-bold text-gray-900">@yield('page-title', 'Dashboard')</h1>
-                            <p class="text-sm text-gray-600">@yield('page-description', '')</p>
-                        </div>
+                        <h1 class="text-xl font-semibold text-gray-900">@yield('page-title', 'Dashboard')</h1>
                     </div>
-
-                    <!-- Right side -->
+                    
                     <div class="flex items-center space-x-4">
-                        <!-- Notifications -->
-                        <button class="text-gray-500 hover:text-gray-700 relative">
-                            <i class="fas fa-bell text-xl"></i>
-                            <span class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
-                        </button>
-
-                        <!-- User Menu -->
-                        <div class="relative" x-data="{ open: false }">
-                            <button @click="open = !open" class="flex items-center text-gray-700 hover:text-gray-900">
-                                <img class="w-8 h-8 rounded-full" src="{{ auth()->user()->profile_photo_url }}" alt="{{ auth()->user()->name }}">
-                                <span class="ml-2 text-sm font-medium">{{ auth()->user()->name }}</span>
-                                <i class="fas fa-chevron-down ml-1 text-xs"></i>
+                        <div class="relative">
+                            <button class="flex items-center text-sm text-gray-700 hover:text-gray-900 focus:outline-none">
+                                <span class="mr-2">{{ Auth::user()->name }}</span>
+                                <i class="fas fa-chevron-down text-xs"></i>
                             </button>
-
-                            <div x-show="open" @click.away="open = false" 
-                                 class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                    <i class="fas fa-user mr-2"></i>Mon profil
-                                </a>
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                    <i class="fas fa-cog mr-2"></i>Paramètres
-                                </a>
-                                <hr class="my-1">
-                                <form method="POST" action="{{ route('logout') }}">
-                                    @csrf
-                                    <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
-                                        <i class="fas fa-sign-out-alt mr-2"></i>Déconnexion
-                                    </button>
-                                </form>
-                            </div>
                         </div>
                     </div>
                 </div>
             </header>
 
             <!-- Page Content -->
-            <main class="flex-1">
-                @yield('content')
+            <main class="flex-1 overflow-y-auto bg-gray-50">
+                <div class="py-6">
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        @if (session('success'))
+                            <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+                                {{ session('success') }}
+                            </div>
+                        @endif
+
+                        @if (session('error'))
+                            <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                                {{ session('error') }}
+                            </div>
+                        @endif
+
+                        @yield('content')
+                    </div>
+                </div>
             </main>
         </div>
     </div>
 
-    <!-- Alpine.js -->
-    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-    
+    @stack('modals')
     @livewireScripts
 </body>
 </html>

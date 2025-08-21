@@ -53,6 +53,7 @@ class DatabaseSeeder extends Seeder
         // Appeler le seeder des services
         $this->call([
             ServiceSeeder::class,
+            CreneauDisponibleSeeder::class,
         ]);
     }
 }
